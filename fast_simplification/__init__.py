@@ -1,0 +1,1 @@
+from fast_simplification._version import __version__

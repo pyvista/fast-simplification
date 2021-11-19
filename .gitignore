@@ -1,0 +1,35 @@
+# Compiled source #
+###################
+*.pyc
+*.pyd
+*.so
+*.o
+
+# Cython generated files #
+##########################
+fast_simplification/_simplify.cpp
+
+# OS generated files #
+######################
+.fuse_hidden*
+*~
+
+# Pip generated folders #
+#########################
+*.egg*
+build/
+dist/
+
+# MISC
+uploadpypi.sh
+.pytest_cache/
+
+# documentation
+_autosummary/
+doc/_build
+doc/images
+doc/examples
+
+# coverage reports
+htmlcov/
+.coverage
