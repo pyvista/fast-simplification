@@ -75,10 +75,6 @@ def test_simplify_agg(mesh):
 
 
 def test_simplify_mesh(mesh):
-    mesh_out = fast_simplification.simplify_mesh(mesh, 0.2)
-
-
-from pyvista import examples
-mesh = examples.download_nefertiti()
-mesh_out = fast_simplification.simplify_mesh(mesh, 0.9)
-mesh_out.plot()
+    reduction = 0.5
+    mesh_out = fast_simplification.simplify_mesh(mesh, reduction)
+    assert mesh_out.n_faces == mesh.n_faces*reduction
