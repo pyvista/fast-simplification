@@ -2,107 +2,136 @@ Python Fast-Quadric-Mesh-Simplification Wrapper
 ===============================================
 This is a python wrapping of the `Fast-Quadric-Mesh-Simplification Library <https://github.com/sp4cerat/Fast-Quadric-Mesh-Simplification/>`_. Having arrived at the same problem as the original author, but needing a Python library, this project seeks to extend the work of the original library while adding integration with Python and the `PyVista <https://github.com/pyvista/pyvista>`_ project.
 
-Usage
------
-The basic interface is quite straightforward and can work directly with arrays of points and triangles:
 
-.. code:: python
+Basic Usage
+-----------
+The basic interface is quite straightforward and can work directly
+with arrays of points and triangles:
+
+.. code:: python   
+
+    points = [[ 0.5, -0.5, 0.0],
+              [ 0.0, -0.5, 0.0],
+              [-0.5, -0.5, 0.0],
+              [ 0.5,  0.0, 0.0],
+              [ 0.0,  0.0, 0.0],
+              [-0.5,  0.0, 0.0],
+              [ 0.5,  0.5, 0.0],
+              [ 0.0,  0.5, 0.0],
+              [-0.5,  0.5, 0.0]]
+
+    faces = [[0, 1, 3],
+             [4, 3, 1],
+             [1, 2, 4],
+             [5, 4, 2],
+             [3, 4, 6],
+             [7, 6, 4],
+             [4, 5, 7],
+             [8, 7, 5]]
+
+    with pytest.raises(ValueError, match="You must specify"):
+        fast_simplification.simplify(points, faces)
+
+    points_out, faces_out = fast_simplification.simplify(points, faces, 0.5)
+    assert points_out.shape[0] == 5
+    assert faces_out.shape[0] == 4
    
 
+Advanced Usage
+--------------
+This library supports direct integration with VTK through PyVista to
+provide a simplistic interface to the library. As this library
+provides a 4-5x improvement to the VTK decimation algorthims.
+
+.. code::
+
+   >>> from pyvista import examples
+   >>> mesh = examples.download_nefertiti()
+   >>> out = fast_simplification.simplify_mesh(mesh, target_reduction=0.9)
+
+   Compare with built-in VTK/PyVista methods:
+
+   >>> fas_sim = fast_simplification.simplify_mesh(mesh, target_reduction=0.9)
+   >>> dec_std = mesh.decimate(0.9)  # vtkQuadricDecimation
+   >>> dec_pro = mesh.decimate_pro(0.9)  # vtkDecimatePro
+
+   >>> pv.set_plot_theme('document')
+   >>> pl = pv.Plotter(shape=(2, 2), window_size=(1000, 1000))
+   >>> pl.add_text('Original', 'upper_right', color='w')
+   >>> pl.add_mesh(mesh, show_edges=True)
+   >>> pl.camera_position = cpos
+
+   >>> pl.subplot(0, 1)
+   >>> pl.add_text(
+   ...    'Fast-Quadric-Mesh-Simplification\n~2.2 seconds', 'upper_right', color='w'
+   ... )
+   >>> pl.add_mesh(fas_sim, show_edges=True)
+   >>> pl.camera_position = cpos
+
+   >>> pl.subplot(1, 0)
+   >>> pl.add_mesh(dec_std, show_edges=True)
+   >>> pl.add_text(
+   ...    'vtkQuadricDecimation\n~9.5 seconds', 'upper_right', color='w'
+   ... )
+   >>> pl.camera_position = cpos
+
+   >>> pl.subplot(1, 1)
+   >>> pl.add_mesh(dec_pro, show_edges=True)
+   >>> pl.add_text(
+   ...    'vtkDecimatePro\n11.4~ seconds', 'upper_right', color='w'
+   ... )
+   >>> pl.camera_position = cpos
+   >>> pl.show()
 
 
-import pyvista as pv
-import fast_simplification
-from pyvista import examples
+Comparison to other libraries
+-----------------------------
+The `pyfqmr
+<https://github.com/Kramer84/pyfqmr-Fast-Quadric-Mesh-Reduction>`_
+library wraps the same header file as this libary and has similar
+capibilities.  In this library, the decision was made to write the
+Cython layer on top of an additional C++ layer rather rather than
+directly interfacing with wrapper from Cython.  This results in a mild
+performance improvement.
 
-# mesh = pv.Sphere(theta_resolution=300, phi_resolution=300)
-mesh = examples.download_nefertiti()
+Reusing the example above.
 
-out = fast_simplification.simplify_mesh(mesh, target_reduction=0.9)
+.. code:: python
 
-cpos = [(183.12753009053094, -347.12194852107706, 53.064467139864554),
-        (-48.71282243594153, -21.704785301053843, -13.311907764923113),
-        (-0.1071583378997645, 0.12484949917192488, 0.98637198519376)]
+   Set up a timing function.
 
-out.plot(show_edges=True, cpos=cpos, window_size=(2000,2000))
+   >>> import pyfqmr
+   >>> vertices = mesh.points
+   >>> faces = mesh.faces.reshape(-1, 4)[:, 1:]
+   >>> def time_pyfqmr():
+   ...     mesh_simplifier = pyfqmr.Simplify()
+   ...     mesh_simplifier.setMesh(vertices, faces)
+   ...     mesh_simplifier.simplify_mesh(
+   ...         target_count=out.n_faces, aggressiveness=7, verbose=0
+   ...     )
+   ...     vertices_out, faces_out, normals_out = mesh_simplifier.getMesh()
+   ...     return vertices_out, faces_out, normals_out
 
-"""
->>> timeit fast_simplification.simplify_mesh(mesh, 0.9)
-3.14 s ± 136 ms per loop (mean ± std. dev. of 7 runs, 1 loop each)
-"""
+Now, time it and compare with the non-vtk API of this library:
 
-"""
-Compare with built-in VTK/PyVista methods:
+.. code:: python
 
->>> timeit mesh.decimate_pro(0.9)
-15.6 s ± 484 ms per loop (mean ± std. dev. of 7 runs, 1 loop each)
+   >>> timeit time_pyfqmr()
+   2.75 s ± 5.35 ms per loop (mean ± std. dev. of 7 runs, 1 loop each)
 
->>> timeit mesh.decimate(0.9)
-18.9 s ± 525 ms per loop (mean ± std. dev. of 7 runs, 1 loop each)
+   >>> timeit vout, fout = fast_simplification.simplify(vertices, faces, 0.9)
+   2.05 s ± 3.18 ms per loop (mean ± std. dev. of 7 runs, 1 loop each)
 
-"""
+Additionally, the ``fast-simplification`` library has direct plugins
+to the ``pyvista`` library, making it easy to read and write meshes:
 
-fas_sim = fast_simplification.simplify_mesh(mesh, target_reduction=0.9)
-dec_std = mesh.decimate(0.9)  # vtkQuadricDecimation
-dec_pro = mesh.decimate_pro(0.9)  # vtkDecimatePro
+.. code:: python
 
-pv.set_plot_theme('document')
-pl = pv.Plotter(shape=(2, 2), window_size=(1000, 1000))
-pl.add_text('Original', 'upper_right', color='w')
-pl.add_mesh(mesh, show_edges=True)
-pl.camera_position = cpos
+   >>> import pyvista
+   >>> import fast_simplification
+   >>> mesh = pyvista.read('my_mesh.stl')
+   >>> simple = fast_simplification.simplify_mesh(mesh)
+   >>> simple.save('my_simple_mesh.stl')
 
-pl.subplot(0, 1)
-pl.add_text(
-    'Fast-Quadric-Mesh-Simplification\n~3.1 seconds', 'upper_right', color='w'
-)
-pl.add_mesh(fast_sim, show_edges=True)
-pl.camera_position = cpos
-
-pl.subplot(1, 0)
-pl.add_mesh(dec_std, show_edges=True)
-pl.add_text(
-    'vtkQuadricDecimation\n~16 seconds', 'upper_right', color='w'
-)
-pl.camera_position = cpos
-
-pl.subplot(1, 1)
-pl.add_mesh(dec_pro, show_edges=True)
-pl.add_text(
-    'vtkDecimatePro\n~19 seconds', 'upper_right', color='w'
-)
-pl.camera_position = cpos
-
-pl.show()
-
-
-###############################################################################
-# With smooth shading
-pl = pv.Plotter(shape=(2, 2), window_size=(1000, 1000))
-pl.add_text('Original', 'upper_right', color='w')
-pl.add_mesh(mesh, smooth_shading=True)
-pl.camera_position = cpos
-
-pl.subplot(0, 1)
-pl.add_text(
-    'Fast-Quadric-Mesh-Simplification\n~3.1 seconds', 'upper_right', color='w'
-)
-pl.add_mesh(fast_sim, smooth_shading=True)
-pl.camera_position = cpos
-
-pl.subplot(1, 0)
-pl.add_mesh(dec_std, smooth_shading=True)
-pl.add_text(
-    'vtkQuadricDecimation\n~16 seconds', 'upper_right', color='w'
-)
-pl.camera_position = cpos
-
-pl.subplot(1, 1)
-pl.add_mesh(dec_pro, smooth_shading=True)
-pl.add_text(
-    'vtkDecimatePro\n~19 seconds', 'upper_right', color='w'
-)
-pl.camera_position = cpos
-
-pl.show()
-
+Since both libraries are based on the same core C++ code, feel free to
+use whichever gives you the best performance and interoperability.
