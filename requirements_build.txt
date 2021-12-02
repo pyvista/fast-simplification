@@ -1,2 +1,3 @@
-wheel
 cython
+numpy
+wheel
