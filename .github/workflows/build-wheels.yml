@@ -24,6 +24,7 @@ jobs:
     - name: Build and validate sdist
       run: |
         pip install twine
+        pip install -r requirements_build.txt
         python setup.py sdist
         twine check dist/*
 
