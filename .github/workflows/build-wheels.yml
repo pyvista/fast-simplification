@@ -12,6 +12,7 @@ on:
 jobs:
   # fail fast and early to avoid clogging GH Actions
   smoke_testing:
+  name: Smoke Testing
     steps:
       - uses: actions/checkout@v2
 
@@ -40,6 +41,7 @@ jobs:
 
 
   build_wheels:
+    needs: smoke_testing
     name: Build wheels on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
