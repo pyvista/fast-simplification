@@ -12,33 +12,39 @@ on:
 jobs:
   # fail fast and early to avoid clogging GH Actions
   smoke_testing:
-  name: Smoke Testing
-  steps:
-    - uses: actions/checkout@v2
+    runs-on: ubuntu-20.04
+    name: Smoke Testing
+    steps:
+      - uses: actions/checkout@v2
 
-    - name: Set up Python
-      uses: actions/setup-python@v2
-      with:
-        python-version: 3.9
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.9
 
-    - name: Build and validate sdist
-      run: |
-        pip install twine
-        pip install -r requirements_build.txt
-        python setup.py sdist
-        twine check dist/*
+      - name: Build and validate sdist
+        run: |
+          pip install twine
+          pip install -r requirements_build.txt
+          python setup.py sdist
+          twine check dist/*
 
-    - name: Install
-      run: pip install dist/*
+      - name: Build and validate sdist
+        run: |
+          pip install twine
+          python setup.py sdist
+          twine check dist/*
 
-    - name: Install test dependencies
-      run: pip install -r requirements_test.txt
+      - name: Install
+        run: pip install dist/*
 
-    - name: Test
-      run: |
-        cd tests
-        pytest -v
+      - name: Install test dependencies
+        run: pip install -r requirements_test.txt
 
+      - name: Test
+        run: |
+          cd tests
+          pytest -v
 
   build_wheels:
     needs: smoke_testing
