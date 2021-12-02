@@ -1,4 +1,4 @@
-"""Setup for pymeshfix"""
+"""Setup for fast-simplification"""
 from io import open as io_open
 import sys
 import os
@@ -51,14 +51,14 @@ def needs_cython():
         try:
             import cython
         except:
-            raise ImportError('Please install cython to build ``pymeshfix``')
+            raise ImportError('Please install cython to build ``fast-simplification``')
     return not has_cython_src
 
 
 def needs_numpy():
     """Check if cython source exist"""
-    tgt_path = os.path.join('pymeshfix')
-    has_cython_src = any(['_meshfix' in fname for fname in os.listdir(tgt_path)])
+    tgt_path = os.path.join('fast_simplification')
+    has_cython_src = any(['_simplify' in fname for fname in os.listdir(tgt_path)])
     return not has_cython_src
 
 
@@ -85,8 +85,8 @@ class build_ext(_build_ext):
 setup_requires = []
 if needs_cython():
     setup_requires.extend(['cython'])
-# if needs_numpy():
-#     setup_requires.extend(['numpy'])
+if needs_numpy():
+    setup_requires.extend(['numpy'])
 
 
 setup(
@@ -118,9 +118,6 @@ setup(
                            define_macros=macros)],
 
     keywords='fast-simplification decimation',
-    # package_data={'pymeshfix/examples': ['StanfordBunny.ply',
-                                         # 'planar_mesh.ply']},
-    # install_requires=['numpy>1.11.0',
-                      # 'pyvista>=0.30.0'],
+    install_requires=['numpy>=1.16.0'],
     setup_requires=setup_requires,
 )
