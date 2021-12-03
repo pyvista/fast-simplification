@@ -86,8 +86,7 @@ jobs:
           branch: gh-pages
           folder: doc/build/html
 
-  Release:
-    if: github.event_name == 'push' && contains(github.ref, 'refs/tags')
+  build_wheels:
     needs: [smoke_testing, docs_build]
     name: Build wheels on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
@@ -122,25 +121,33 @@ jobs:
           # Build options
           CIBW_BEFORE_BUILD: pip install -r requirements_build.txt
 
-      - uses: actions/upload-artifact@v2
-        with:
-          path: ./wheelhouse/*.whl
+  release:
+    # if: github.event_name == 'push' && contains(github.ref, 'refs/tags')
+    needs: build_wheels
+    name: Release
+    runs-on: ubuntu-20.04
 
-      - name: Build and upload the sdist on linux
-        if: ${{ runner.os == 'Linux' }}
+    steps:
+      - name: Set up Python
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.10
+
+      # this downloads all artifacts
+      - uses: actions/download-artifact@v2
+
+      - name: Display structure of downloaded files
+        run: ls -R
+
+      - name: Build the sdist
+        run: |
+          python setup.py sdist
+
+      - name: Upload to Public PyPi
         run: |
           pip install twine
-          pip install -r requirements_build.txt
-          python setup.py sdist
+          twine upload --skip-existing ./**/*.whl
+          twine upload --skip-existing dist/*
         env:
           TWINE_USERNAME: __token__
           TWINE_PASSWORD: ${{ secrets.PYPI_TOKEN }}
-          TWINE_REPOSITORY_URL: "https://upload.pypi.org/legacy/"
-
-      - name: Upload to PyPi
-        run: |
-          twine upload --skip-existing ./wheelhouse/*.whl
-        env:
-          TWINE_USERNAME: __token__
-          TWINE_PASSWORD: ${{ secrets.PYPI_TOKEN }}
-          TWINE_REPOSITORY_URL: "https://upload.pypi.org/legacy/"
