@@ -51,7 +51,7 @@ jobs:
           pytest -v
 
   build_wheels:
-    needs: smoke_testing
+    # needs: smoke_testing
     name: Build wheels on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
@@ -85,8 +85,8 @@ jobs:
           # Build options
           CIBW_BEFORE_BUILD: pip install -r requirements_build.txt
           # Testing
-          CIBW_TEST_REQUIRES: "-r tests/requirements.txt"
-          CIBW_TEST_COMMAND: pytest {package}/tests
+          CIBW_TEST_REQUIRES: "-r requirements_test.txt"
+          CIBW_TEST_COMMAND: pytest
 
       - uses: actions/upload-artifact@v2
         with:
