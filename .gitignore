@@ -18,3 +18,5 @@ doc/examples/
 doc/_autosummary/
 
 dist/
+venv/
+build/
