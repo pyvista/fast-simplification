@@ -1,4 +1,3 @@
-
 name: Build
 
 on:
@@ -83,6 +82,8 @@ jobs:
           CIBW_PROJECT_REQUIRES_PYTHON: ">=3.6,<3.10"
           CIBW_SKIP: "pp*"  # Skip PyPy.
           CIBW_MANYLINUX_X86_64_IMAGE: "manylinux2014"
+          # Build options
+          CIBW_BEFORE_BUILD: pip install -r tests/requirements.txt
           # Testing
           CIBW_TEST_REQUIRES: "-r tests/requirements.txt"
           CIBW_TEST_COMMAND: pytest {package}/tests
