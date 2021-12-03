@@ -50,57 +50,6 @@ jobs:
           cd tests
           pytest -v
 
-  build_wheels:
-    # needs: smoke_testing
-    name: Build wheels on ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-20.04, windows-2019, macOS-10.15]
-
-    steps:
-      - uses: actions/checkout@v2
-
-      # Used to host cibuildwheel
-      - uses: actions/setup-python@v2
-
-      - name: Install cibuildwheel
-        run: python -m pip install cibuildwheel==2.1.1
-
-      # We need docker's cross architecture emulation to build ARM wheels.
-      - if: startsWith(matrix.os, 'ubuntu')
-        uses: crazy-max/ghaction-docker-buildx@v3.3.0
-
-      - name: Build wheels
-        run: python -m cibuildwheel --output-dir wheelhouse
-        # Configuration is passed via environment variables. See
-        # https://cibuildwheel.readthedocs.io/en/stable/options/
-        env:
-          # Platform options
-          CIBW_ARCHS_MACOS: "x86_64 arm64"
-          CIBW_PROJECT_REQUIRES_PYTHON: ">=3.6,<3.10"
-          CIBW_SKIP: "pp*"  # Skip PyPy.
-          CIBW_MANYLINUX_X86_64_IMAGE: "manylinux2014"
-          # Build options
-          CIBW_BEFORE_BUILD: pip install -r requirements_build.txt
-          # Testing
-          CIBW_TEST_REQUIRES: "-r requirements_test.txt"
-          CIBW_TEST_COMMAND: pytest
-
-      - uses: actions/upload-artifact@v2
-        with:
-          path: ./wheelhouse/*.whl
-
-      - name: Upload to PyPi
-        if: matrix.python-version == '3.9' && startsWith(github.ref, 'refs/tags')
-        run: |
-          twine upload --skip-existing ./wheelhouse/*.whl
-        env:
-          TWINE_USERNAME: __token__
-          TWINE_PASSWORD: ${{ secrets.PYPI_TOKEN }}
-          TWINE_REPOSITORY_URL: "https://upload.pypi.org/legacy/"
-
   docs_build:
     name: Build Documentation
     runs-on: ubuntu-latest
@@ -136,3 +85,60 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           branch: gh-pages
           folder: doc/build/html
+
+  Release:
+    # if: github.event_name == 'push' && contains(github.ref, 'refs/tags')
+    # needs: [smoke_testing, docs_build]
+    name: Build wheels on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-20.04, windows-2019, macOS-10.15]
+
+    steps:
+      - uses: actions/checkout@v2
+
+      # Used to host cibuildwheel
+      - uses: actions/setup-python@v2
+
+      - name: Install cibuildwheel
+        run: python -m pip install cibuildwheel==2.1.1
+
+      # We need docker's cross architecture emulation to build ARM wheels.
+      - if: startsWith(matrix.os, 'ubuntu')
+        uses: crazy-max/ghaction-docker-buildx@v3.3.0
+
+      - name: Build wheels
+        run: python -m cibuildwheel --output-dir wheelhouse
+        # Configuration is passed via environment variables. See
+        # https://cibuildwheel.readthedocs.io/en/stable/options/
+        env:
+          # Platform options
+          CIBW_ARCHS_MACOS: "x86_64 arm64"
+          CIBW_PROJECT_REQUIRES_PYTHON: ">=3.6,<3.10"
+          CIBW_SKIP: "pp*"  # Skip PyPy.
+          CIBW_MANYLINUX_X86_64_IMAGE: "manylinux2014"
+          # Build options
+          CIBW_BEFORE_BUILD: pip install -r requirements_build.txt
+          # Testing
+          CIBW_TEST_REQUIRES: "-r requirements_test.txt"
+          CIBW_TEST_COMMAND: pytest {package}/tests
+
+      - uses: actions/upload-artifact@v2
+        with:
+          path: ./wheelhouse/*.whl
+
+      - name: Build the sdist
+        run: |
+          pip install twine
+          python setup.py sdist
+
+      - name: Upload to PyPi
+        run: |
+          twine upload --skip-existing ./wheelhouse/*.whl
+          twine upload --skip-existing dist/*.tar.gz
+        env:
+          TWINE_USERNAME: __token__
+          TWINE_PASSWORD: ${{ secrets.PYPI_TOKEN }}
+          TWINE_REPOSITORY_URL: "https://upload.pypi.org/legacy/"

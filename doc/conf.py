@@ -2,11 +2,10 @@ import os
 import sys
 import datetime
 
-import pymeshfix
-
-# -- pyvista configuration ---------------------------------------------------
 import pyvista
 import numpy as np
+from fast_simplification import __version__
+
 # Manage errors
 pyvista.set_error_output_file('errors.txt')
 # Ensure that offscreen rendering is used for docs generation
@@ -23,14 +22,13 @@ pyvista.BUILDING_GALLERY = True
 
 # -- Project information -----------------------------------------------------
 
-project = 'pymeshfix'
+project = 'fast-simplification'
 year = datetime.date.today().year
 copyright = f"2017-{year}, The PyVista Developers"
 author = 'Alex Kaszynski'
 
 # The short X.Y version
-version = release = pymeshfix.__version__
-
+version = release = __version__
 
 # -- General configuration ---------------------------------------------------
 html_logo = "./_static/pyvista_logo_sm.png"
