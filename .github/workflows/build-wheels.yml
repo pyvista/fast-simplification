@@ -83,7 +83,7 @@ jobs:
           CIBW_SKIP: "pp*"  # Skip PyPy.
           CIBW_MANYLINUX_X86_64_IMAGE: "manylinux2014"
           # Build options
-          CIBW_BEFORE_BUILD: pip install -r tests/requirements_build.txt
+          CIBW_BEFORE_BUILD: pip install -r requirements_build.txt
           # Testing
           CIBW_TEST_REQUIRES: "-r tests/requirements.txt"
           CIBW_TEST_COMMAND: pytest {package}/tests
@@ -121,6 +121,7 @@ jobs:
 
       - name: Install ansys-mapdl-core
         run: |
+          pip install -r requirements_build.txt
           pip install .
 
       - name: Build Documentation
