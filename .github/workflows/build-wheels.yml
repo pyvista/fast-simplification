@@ -87,8 +87,8 @@ jobs:
           folder: doc/build/html
 
   Release:
-    # if: github.event_name == 'push' && contains(github.ref, 'refs/tags')
-    # needs: [smoke_testing, docs_build]
+    if: github.event_name == 'push' && contains(github.ref, 'refs/tags')
+    needs: [smoke_testing, docs_build]
     name: Build wheels on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
@@ -121,23 +121,25 @@ jobs:
           CIBW_MANYLINUX_X86_64_IMAGE: "manylinux2014"
           # Build options
           CIBW_BEFORE_BUILD: pip install -r requirements_build.txt
-          # Testing
-          CIBW_TEST_REQUIRES: "-r requirements_test.txt"
-          CIBW_TEST_COMMAND: pytest {package}/tests
 
       - uses: actions/upload-artifact@v2
         with:
           path: ./wheelhouse/*.whl
 
-      - name: Build the sdist
+      - name: Build and upload the sdist on linux
+        if: ${{ runner.os == 'Linux' }}
         run: |
           pip install twine
+          pip install -r requirements_build.txt
           python setup.py sdist
+        env:
+          TWINE_USERNAME: __token__
+          TWINE_PASSWORD: ${{ secrets.PYPI_TOKEN }}
+          TWINE_REPOSITORY_URL: "https://upload.pypi.org/legacy/"
 
       - name: Upload to PyPi
         run: |
           twine upload --skip-existing ./wheelhouse/*.whl
-          twine upload --skip-existing dist/*.tar.gz
         env:
           TWINE_USERNAME: __token__
           TWINE_PASSWORD: ${{ secrets.PYPI_TOKEN }}
