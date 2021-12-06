@@ -144,6 +144,7 @@ jobs:
 
       - name: Build the sdist
         run: |
+          pip install -r requirements_build.txt
           python setup.py sdist
 
       - name: Upload to Public PyPi
