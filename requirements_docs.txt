@@ -1,0 +1,7 @@
+pyvista
+https://github.com/numpy/numpydoc/archive/main.zip  # need latest
+pydata-sphinx-theme
+Sphinx>=4.0.0
+sphinx-gallery>=0.8.1
+sphinx-notfound-page>=0.3.0
+sphinx-copybutton

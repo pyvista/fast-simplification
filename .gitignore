@@ -6,6 +6,17 @@
 *.o
 __pycache__/
 
-# Cython generated files #
-# fast_simplification/_simplify.cpp
+# Pip
+*.egg-info
 
+# Cython generated files #
+fast_simplification/_simplify.cpp
+
+# documentation
+doc/_build/
+doc/examples/
+doc/_autosummary/
+
+dist/
+venv/
+build/
