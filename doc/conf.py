@@ -100,8 +100,8 @@ html_context = {
     # Set the following variables to generate the resulting github URL for each page.
     # Format Template: https://{{ github_host|default("github.com") }}/{{ github_user }}/{{ github_repo }}/blob/{{ github_version }}{{ conf_py_path }}{{ pagename }}{{ suffix }}
     'github_user': 'pyvista',
-    'github_repo': 'pymeshfix',
-    'github_version': 'master/doc/',
+    'github_repo': 'fast-simplification',
+    'github_version': 'master',
     'menu_links_name': 'Getting Connected',
     'menu_links': [
         ('<i class="fa fa-slack fa-fw"></i> Slack Community', 'http://slack.pyvista.org'),

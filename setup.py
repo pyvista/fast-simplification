@@ -1,13 +1,8 @@
-"""Setup for fast-simplification"""
+"""Setup for fast-simplification."""
 from io import open as io_open
 import sys
 import os
 import builtins
-
-# workaround for *.toml https://github.com/pypa/pip/issues/7953
-import site
-site.ENABLE_USER_SITE = "--user" in sys.argv[1:]
-
 
 from setuptools import setup, Extension
 from setuptools.command.build_ext import build_ext as _build_ext
@@ -18,7 +13,6 @@ filepath = os.path.dirname(__file__)
 macros = []
 if os.name == 'nt':  # windows
     extra_compile_args = ['/openmp', '/O2', '/w', '/GS']
-    extra_link_args = []
 elif os.name == 'posix':  # linux org mac os
     if sys.platform == 'linux':
         extra_compile_args = ['-std=gnu++11', '-O3', '-w']
@@ -43,25 +37,6 @@ with io_open(version_file, mode='r') as fd:
 readme_file = os.path.join(filepath, 'README.rst')
 
 
-def needs_cython():
-    """Check if cython source exist"""
-    tgt_path = os.path.join('fast_simplification')
-    has_cython_src = any(['_simplify.cpp' in fname for fname in os.listdir(tgt_path)])
-    if not has_cython_src:
-        try:
-            import cython
-        except:
-            raise ImportError('Please install cython to build ``fast-simplification``')
-    return not has_cython_src
-
-
-def needs_numpy():
-    """Check if cython source exist"""
-    tgt_path = os.path.join('fast_simplification')
-    has_cython_src = any(['_simplify' in fname for fname in os.listdir(tgt_path)])
-    return not has_cython_src
-
-
 # for: the cc1plus: warning: command line option '-Wstrict-prototypes'
 class build_ext(_build_ext):
     def finalize_options(self):
@@ -82,13 +57,6 @@ class build_ext(_build_ext):
         _build_ext.build_extensions(self)
 
 
-setup_requires = []
-if needs_cython():
-    setup_requires.extend(['cython'])
-if needs_numpy():
-    setup_requires.extend(['numpy'])
-
-
 setup(
     name='fast_simplification',
     packages=['fast_simplification'],
@@ -102,10 +70,11 @@ setup(
     classifiers=['Development Status :: 4 - Beta',
                  'Intended Audience :: Science/Research',
                  'License :: OSI Approved :: MIT License',
-                 'Programming Language :: Python :: 3.6',
                  'Programming Language :: Python :: 3.7',
                  'Programming Language :: Python :: 3.8',
                  'Programming Language :: Python :: 3.9',
+                 'Programming Language :: Python :: 3.10',
+                 'Programming Language :: Python :: 3.11',
     ],
     url='https://github.com/pyvista/fast-simplification',
 
@@ -119,5 +88,4 @@ setup(
 
     keywords='fast-simplification decimation',
     install_requires=['numpy>=1.16.0'],
-    setup_requires=setup_requires,
 )

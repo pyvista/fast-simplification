@@ -1,9 +1,16 @@
-import pyvista as pv
 import pytest
-from pyvista import examples
 import numpy as np
 
 import fast_simplification
+
+
+try:
+    import pyvista as pv
+    has_vtk = True
+except ModuleNotFoundError:
+    has_vtk = False
+
+skip_no_vtk = pytest.mark.skipif(not has_vtk, reason='Requires VTK')
 
 
 @pytest.fixture
@@ -41,6 +48,7 @@ def test_simplify_trivial():
     assert faces_out.shape[0] == 4
 
 
+@skip_no_vtk
 def test_simplify_none(mesh):
     triangles = mesh.faces.reshape(-1, 4)[:, 1:]
 
@@ -50,6 +58,7 @@ def test_simplify_none(mesh):
     assert np.allclose(mesh.points, points)
 
 
+@skip_no_vtk
 def test_simplify(mesh):
     triangles = mesh.faces.reshape(-1, 4)[:, 1:]
     reduction = 0.5
@@ -57,6 +66,7 @@ def test_simplify(mesh):
     assert triangles.shape[0]*reduction == faces.shape[0]
 
 
+@skip_no_vtk
 def test_simplify_agg(mesh):
     triangles = mesh.faces.reshape(-1, 4)[:, 1:]
 
@@ -74,6 +84,7 @@ def test_simplify_agg(mesh):
     assert triangles.shape[0]*reduction < faces.shape[0] < triangles.shape[0]
 
 
+@skip_no_vtk
 def test_simplify_mesh(mesh):
     reduction = 0.5
     mesh_out = fast_simplification.simplify_mesh(mesh, reduction)
