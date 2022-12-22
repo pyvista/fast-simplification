@@ -1,3 +1,2 @@
-
 def simplify():
     pass

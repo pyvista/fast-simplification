@@ -5,15 +5,16 @@
 
 
 import numpy as np
-cimport numpy as np
 
-from libcpp cimport bool
+cimport numpy as np
 from libc.stdint cimport int64_t
+from libcpp cimport bool
+
 
 cdef extern from "wrapper.h" namespace "Simplify":
     void load_arrays_int32(const int, const int, float*, int*)
     void load_arrays_int64(const int, const int, float*, int64_t*)
-    void simplify_mesh(int, double agressiveness, bool verbose)
+    void simplify_mesh(int, double aggressiveness, bool verbose)
     void get_points(float*)
     void get_triangles(int*)
     int get_faces_int32(int*)
@@ -37,8 +38,8 @@ def load_int64(
     load_arrays_int64(n_points, n_faces, &points[0, 0], &faces[0, 0])
 
 
-def simplify(int target_count, double agressiveness=7, bool verbose=False):
-    simplify_mesh(target_count, agressiveness, verbose)
+def simplify(int target_count, double aggressiveness=7, bool verbose=False):
+    simplify_mesh(target_count, aggressiveness, verbose)
 
 
 def save_obj(filename):
@@ -66,21 +67,21 @@ def return_triangles():
 
 
 def return_faces_int32_no_padding():
-    """VTK formated faces"""
+    """VTK formatted faces"""
     cdef int [::1] faces = np.empty(n_triangles()*3, np.int32)
     n_tri = get_faces_int32_no_padding(&faces[0])
     return np.array(faces[:n_tri*3])
 
 
 def return_faces_int32():
-    """VTK formated faces"""
+    """VTK formatted faces"""
     cdef int [::1] faces = np.empty(n_triangles()*4, np.int32)
     n_tri = get_faces_int32(&faces[0])
     return np.array(faces[:n_tri*4])
 
 
 def return_faces_int64():
-    """VTK formated faces"""
+    """VTK formatted faces"""
     cdef int64_t [::1] faces = np.empty(n_triangles()*4, np.int64)
     n_tri = get_faces_int64(&faces[0])
     return np.array(faces[:n_tri*4])
