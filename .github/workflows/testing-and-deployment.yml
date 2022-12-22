@@ -77,7 +77,7 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           branch: gh-pages
-          folder: doc/build/html
+          folder: doc/_build/html
 
   build_wheels:
     needs: smoke_testing
