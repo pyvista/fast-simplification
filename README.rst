@@ -7,8 +7,9 @@ library, this project seeks to extend the work of the original library while
 adding integration to Python and the `PyVista
 <https://github.com/pyvista/pyvista>`_ project.
 
+For the full documentation visit: https://pyvista.github.io/fast-simplification/
+
 .. image:: https://github.com/pyvista/fast-simplification/raw/main/doc/images/simplify_demo.png
-   
 
 Basic Usage
 -----------
