@@ -6,32 +6,24 @@ def _check_args(target_reduction, target_count, n_faces):
     """Check arguments."""
     if target_reduction and target_count:
         raise ValueError(
-            "You may specify ``target_reduction`` or ``target_count``, but not"
-            " both"
+            "You may specify ``target_reduction`` or ``target_count``, but not" " both"
         )
     if target_reduction is None and target_count is None:
-        raise ValueError(
-            "You must specify ``target_reduction`` or ``target_count``"
-        )
+        raise ValueError("You must specify ``target_reduction`` or ``target_count``")
 
     if target_reduction is not None:
         if target_reduction > 1 or target_reduction < 0:
             raise ValueError("``target_reduction`` must be between 0 and 1")
-        target_count = (1 - target_reduction)*n_faces
+        target_count = (1 - target_reduction) * n_faces
 
     if target_count < 0:
         raise ValueError("``target_count`` must be greater than 0")
     if target_count > n_faces:
-        raise ValueError(
-            f"``target_count`` must be less than the number of faces {mesh.n_faces}"
-        )
+        raise ValueError(f"``target_count`` must be less than the number of faces {mesh.n_faces}")
     return int(target_count)
 
 
-def simplify(
-        points, triangles, target_reduction=None, target_count=None, agg=7,
-        verbose=False
-):
+def simplify(points, triangles, target_reduction=None, target_count=None, agg=7, verbose=False):
     """Simplify a triangular mesh.
 
     Parameters
@@ -106,14 +98,12 @@ def simplify(
     if points.ndim != 2:
         raise ValueError("``points`` array must be 2 dimensional")
     if points.shape[1] != 3:
-        raise ValueError(
-            f"Expected ``points`` array to be (n, 3), not {points.shape}")
+        raise ValueError(f"Expected ``points`` array to be (n, 3), not {points.shape}")
 
     if triangles.ndim != 2:
         raise ValueError("``triangles`` array must be 2 dimensional")
     if triangles.shape[1] != 3:
-        raise ValueError(
-            f"Expected ``triangles`` array to be (n, 3), not {triangles.shape}")
+        raise ValueError(f"Expected ``triangles`` array to be (n, 3), not {triangles.shape}")
 
     n_faces = triangles.shape[0]
     target_count = _check_args(target_reduction, target_count, n_faces)
@@ -142,9 +132,7 @@ def simplify(
     return points, faces
 
 
-def simplify_mesh(
-        mesh, target_reduction=None, target_count=None, agg=7, verbose=False
-):
+def simplify_mesh(mesh, target_reduction=None, target_count=None, agg=7, verbose=False):
     """Simplify a pyvista mesh.
 
     Parameters
@@ -179,8 +167,7 @@ def simplify_mesh(
         import pyvista as pv
     except ImportError:
         raise ImportError(
-            "Please install pyvista to use this feature with:\n"
-            "pip install pyvista"
+            "Please install pyvista to use this feature with:\n" "pip install pyvista"
         )
 
     # installed by pyvista
@@ -191,7 +178,7 @@ def simplify_mesh(
         mesh.n_points,
         mesh.points.astype(np.float32, copy=False),
         mesh.faces.astype(np.int32, copy=False),
-        n_faces
+        n_faces,
     )
 
     target_count = _check_args(target_reduction, target_count, n_faces)
@@ -204,6 +191,4 @@ def simplify_mesh(
         faces = _simplify.return_faces_int64()
 
     # construct mesh
-    return pv.PolyData(
-        _simplify.return_points(), faces, deep=False
-    )
+    return pv.PolyData(_simplify.return_points(), faces, deep=False)

@@ -6,7 +6,7 @@ namespace Simplify{
   // load triangles
   void load_points(const int n_points, float* points){
     vertices.clear();
-    // load verticies
+    // load vertices
     for (int ii = 0; ii < n_points; ii ++){
       Vertex v;
       v.p.x = points[0 + 3*ii];
@@ -97,10 +97,10 @@ namespace Simplify{
     }
   }
 
-  // populate a contigious array with the points in the vertices vector
+  // populate a contiguous array with the points in the vertices vector
   void get_points(float* points){
 
-    // load verticies
+    // load vertices
     int n_points = vertices.size();
     for (int ii = 0; ii < n_points; ii ++){
       points[0 + 3*ii] = vertices[ii].p.x;
@@ -109,10 +109,10 @@ namespace Simplify{
     }
   }
 
-  // populate a contigious array with the points in the vertices vector
+  // populate a contiguous array with the points in the vertices vector
   void get_triangles(int* tri){
 
-    // load verticies
+    // load vertices
     int n_tri = triangles.size();
     for (int ii = 0; ii < n_tri; ii ++){
       tri[0 + 3*ii] = triangles[ii].v[0];
@@ -121,10 +121,10 @@ namespace Simplify{
     }
   }
 
-  // populate a contigious array with the points in the vertices vector
+  // populate a contiguous array with the points in the vertices vector
   int get_faces_int32(int32_t* tri){
 
-    // load verticies
+    // load vertices
     int n_tri = triangles.size();
     int jj = 0;
     for (int ii = 0; ii < n_tri; ii ++){
@@ -139,11 +139,11 @@ namespace Simplify{
     return jj;
   }
 
-  // populate a contigious array with the points in the vertices
+  // populate a contiguous array with the points in the vertices
   // vector without the vtk padding
   int get_faces_int32_no_padding(int32_t* tri){
 
-    // load verticies
+    // load vertices
     int n_tri = triangles.size();
     int jj = 0;
     for (int ii = 0; ii < n_tri; ii ++){
@@ -157,10 +157,10 @@ namespace Simplify{
     return jj;
   }
 
-  // populate a contigious array with the points in the vertices vector
+  // populate a contiguous array with the points in the vertices vector
   int get_faces_int64(int64_t* tri){
 
-    // load verticies
+    // load vertices
     int n_tri = triangles.size();
     int jj = 0;
     for (int ii = 0; ii < n_tri; ii ++){

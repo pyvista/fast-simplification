@@ -7,6 +7,8 @@ library, this project seeks to extend the work of the original library while
 adding integration to Python and the `PyVista
 <https://github.com/pyvista/pyvista>`_ project.
 
+.. image:: https://github.com/pyvista/fast-simplification/raw/main/doc/images/simplify_demo.png
+   
 
 Basic Usage
 -----------
@@ -34,19 +36,14 @@ with arrays of points and triangles:
              [4, 5, 7],
              [8, 7, 5]]
 
-    with pytest.raises(ValueError, match="You must specify"):
-        fast_simplification.simplify(points, faces)
-
     points_out, faces_out = fast_simplification.simplify(points, faces, 0.5)
-    assert points_out.shape[0] == 5
-    assert faces_out.shape[0] == 4
    
 
 Advanced Usage
 --------------
 This library supports direct integration with VTK through PyVista to
 provide a simplistic interface to the library. As this library
-provides a 4-5x improvement to the VTK decimation algorthims.
+provides a 4-5x improvement to the VTK decimation algorithms.
 
 .. code:: python
 
@@ -92,7 +89,7 @@ provides a 4-5x improvement to the VTK decimation algorthims.
 Comparison to other libraries
 -----------------------------
 The `pyfqmr <https://github.com/Kramer84/pyfqmr-Fast-Quadric-Mesh-Reduction>`_
-library wraps the same header file as this libary and has similar capibilities.
+library wraps the same header file as this library and has similar capabilities.
 In this library, the decision was made to write the Cython layer on top of an
 additional C++ layer rather than directly interfacing with wrapper from Cython.
 This results in a mild performance improvement.
