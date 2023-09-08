@@ -469,6 +469,7 @@ namespace Simplify
 		int triangle_count=triangles.size();
 		//int iteration = 0;
 		//loop(iteration,0,100)
+		collapses.clear();
 		for (int iteration = 0; iteration < 9999; iteration ++)
 		{
 			// update mesh constantly
@@ -527,6 +528,9 @@ namespace Simplify
 
 					update_triangles(i0,v0,deleted0,deleted_triangles);
 					update_triangles(i0,v1,deleted1,deleted_triangles);
+
+					// record collapse
+					collapses.push_back(std::vector<int>({i0,i1}));
 
 					int tcount=refs.size()-tstart;
 
