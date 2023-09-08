@@ -63,6 +63,12 @@ def simplify(
         ``target_reduction`` or ``target_count``.
     verbose : bool, optional
         Enable verbose output when simplifying the mesh.
+    return_collapses : bool, optional
+        If True, return the history of collapses as a
+        ``(n_collapses, 2)`` array of indices.
+        ``collaspes[i] = [i0, i1]`` means that durint the i-th
+        collapse, the vertex ``i1`` was collapsed into the vertex
+        ``i0``.
 
     Returns
     -------
@@ -70,6 +76,8 @@ def simplify(
         Points array.
     np.ndarray
         Triangles array.
+    np.ndarray (optional)
+        Collapses array.
 
     Examples
     --------
@@ -176,7 +184,12 @@ def simplify_mesh(mesh, target_reduction=None, target_count=None, agg=7, verbose
     Returns
     -------
     pyvista.PolyData
-        Simplified mesh.
+        Simplified mesh. The field data of the mesh will contain a
+        field named ``fast_simplification_collapses`` that contains
+        the history of collapses as a ``(n_collapses, 2)`` array of
+        indices. ``collaspes[i] = [i0, i1]`` means that during the
+        i-th collapse, the vertex ``i1`` was collapsed into the vertex
+        ``i0``.
 
     """
     try:

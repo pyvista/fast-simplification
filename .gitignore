@@ -20,3 +20,6 @@ doc/_autosummary/
 dist/
 venv/
 build/
+
+# IDE
+.vscode/
