@@ -51,6 +51,17 @@ def test_simplify_trivial():
     assert points_out.shape[0] == 5
     assert faces_out.shape[0] == 4
 
+    # Test with return_collapses=True
+    # We check that the number of points after simplification is equal to the number of
+    # points before simplification minus the number of collapses
+    points_out, faces_out, collapses = fast_simplification.simplify(
+        points, faces, 0.5, return_collapses=True
+    )
+    n_points_before_simplification = len(points)
+    n_points_after_simplification = len(points_out)
+    n_collapses = len(collapses)
+    assert n_points_after_simplification == n_points_before_simplification - n_collapses
+
 
 @skip_no_vtk
 def test_simplify_none(mesh):
@@ -66,8 +77,16 @@ def test_simplify_none(mesh):
 def test_simplify(mesh):
     triangles = mesh.faces.reshape(-1, 4)[:, 1:]
     reduction = 0.5
-    points, faces = fast_simplification.simplify(mesh.points, triangles, reduction)
+    points, faces, collapses = fast_simplification.simplify(
+        mesh.points, triangles, reduction, return_collapses=True
+    )
     assert triangles.shape[0] * reduction == faces.shape[0]
+    # We check that the number of points after simplification is equal to the number of
+    # points before simplification minus the number of collapses
+    n_points_before_simplification = mesh.points.shape[0]
+    n_points_after_simplification = points.shape[0]
+    n_collapses = collapses.shape[0]
+    assert n_points_after_simplification == n_points_before_simplification - n_collapses
 
 
 @skip_no_vtk
