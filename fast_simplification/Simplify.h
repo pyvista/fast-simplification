@@ -11,7 +11,7 @@
 //
 // 5/2016: Chris Rorden created minimal version for OSX/Linux/Windows compile
 
-//#include <iostream>
+#include <iostream>
 //#include <stddef.h>
 //#include <functional>
 //#include <sys/stat.h>
@@ -327,7 +327,6 @@ namespace Simplify
     std::vector<std::string> materials;
 
 	std::vector<std::vector<int>> collapses;
-	std::vector<std::vector<double>> target_points;
 
 	// Helper functions
 
@@ -362,8 +361,10 @@ namespace Simplify
 		int triangle_count=triangles.size();
 		//int iteration = 0;
 		//loop(iteration,0,100)
+		collapses.clear();
 		for (int iteration = 0; iteration < 100; iteration ++)
 		{
+			
 			if(triangle_count-deleted_triangles<=target_count)break;
 
 			// update mesh once in a while
@@ -426,12 +427,12 @@ namespace Simplify
 					v0.q=v1.q+v0.q; // add the quadrics
 					int tstart=refs.size();
 
-					collapses.push_back(std::vector<int>({i0,i1}));
-					target_points.push_back(std::vector<double>({p.x,p.y,p.z}));
-
 					// update triangles affected by the collapse
 					update_triangles(i0,v0,deleted0,deleted_triangles);
 					update_triangles(i0,v1,deleted1,deleted_triangles);
+
+					// record collapse
+					collapses.push_back(std::vector<int>({i0,i1}));
 
 					int tcount=refs.size()-tstart;
 
@@ -439,6 +440,7 @@ namespace Simplify
 					{
 						// save ram
 						if(tcount)memcpy(&refs[v0.tstart],&refs[tstart],tcount*sizeof(Ref));
+						
 					}
 					else
 						// append
@@ -453,6 +455,7 @@ namespace Simplify
 		}
 		// clean up mesh
 		compact_mesh();
+		
 	} //simplify_mesh()
 
 	void simplify_mesh_lossless(bool verbose=false)
