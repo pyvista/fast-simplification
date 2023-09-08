@@ -23,6 +23,7 @@
 #include <stdlib.h>
 #include <map>
 #include <vector>
+#include <utility> // std::pair
 #include <string>
 #include <math.h>
 #include <stdint.h>
@@ -325,6 +326,9 @@ namespace Simplify
     std::string mtllib;
     std::vector<std::string> materials;
 
+	std::vector<std::vector<int>> collapses;
+	std::vector<std::vector<double>> target_points;
+
 	// Helper functions
 
 	double vertex_error(SymetricMatrix q, double x, double y, double z);
@@ -345,6 +349,7 @@ namespace Simplify
 
 	void simplify_mesh(int target_count, double agressiveness=7, bool verbose=false)
 	{
+
 		// init
 		loopi(0,triangles.size())
         {
@@ -401,7 +406,7 @@ namespace Simplify
 
 					// Compute vertex to collapse to
 					vec3f p;
-					calculate_error(i0,i1,p);
+					calculate_error(i0,i1,p); // p is the optimal point to collapse to
 					deleted0.resize(v0.tcount); // normals temporarily
 					deleted1.resize(v1.tcount); // normals temporarily
 					// don't remove if flipped
@@ -416,10 +421,15 @@ namespace Simplify
 					}
 
 					// not flipped, so remove edge
-					v0.p=p;
-					v0.q=v1.q+v0.q;
+					// v0 <- v1 (i0 <- i1)
+					v0.p=p; // set the optimal point to collapse to
+					v0.q=v1.q+v0.q; // add the quadrics
 					int tstart=refs.size();
 
+					collapses.push_back(std::vector<int>({i0,i1}));
+					target_points.push_back(std::vector<double>({p.x,p.y,p.z}));
+
+					// update triangles affected by the collapse
 					update_triangles(i0,v0,deleted0,deleted_triangles);
 					update_triangles(i0,v1,deleted1,deleted_triangles);
 
@@ -491,7 +501,7 @@ namespace Simplify
 
 					// Compute vertex to collapse to
 					vec3f p;
-					calculate_error(i0,i1,p);
+					calculate_error(i0,i1,p); // p is the optimal point to collapse to
 
 					deleted0.resize(v0.tcount); // normals temporarily
 					deleted1.resize(v1.tcount); // normals temporarily
@@ -507,8 +517,9 @@ namespace Simplify
 					}
 
 					// not flipped, so remove edge
-					v0.p=p;
-					v0.q=v1.q+v0.q;
+					// v0 <- v1 (i0 <- i1)
+					v0.p=p; // set the optimal point to collapse to
+					v0.q=v1.q+v0.q; // add the quadrics (for calculating the error)
 					int tstart=refs.size();
 
 					update_triangles(i0,v0,deleted0,deleted_triangles);

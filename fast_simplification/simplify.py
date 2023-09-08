@@ -19,11 +19,21 @@ def _check_args(target_reduction, target_count, n_faces):
     if target_count < 0:
         raise ValueError("``target_count`` must be greater than 0")
     if target_count > n_faces:
-        raise ValueError(f"``target_count`` must be less than the number of faces {mesh.n_faces}")
+        raise ValueError(
+            f"``target_count`` must be less than the number of faces {mesh.n_faces}"
+        )
     return int(target_count)
 
 
-def simplify(points, triangles, target_reduction=None, target_count=None, agg=7, verbose=False):
+def simplify(
+    points,
+    triangles,
+    target_reduction=None,
+    target_count=None,
+    agg=7,
+    verbose=False,
+    return_collapses=False,
+):
     """Simplify a triangular mesh.
 
     Parameters
@@ -103,7 +113,9 @@ def simplify(points, triangles, target_reduction=None, target_count=None, agg=7,
     if triangles.ndim != 2:
         raise ValueError("``triangles`` array must be 2 dimensional")
     if triangles.shape[1] != 3:
-        raise ValueError(f"Expected ``triangles`` array to be (n, 3), not {triangles.shape}")
+        raise ValueError(
+            f"Expected ``triangles`` array to be (n, 3), not {triangles.shape}"
+        )
 
     n_faces = triangles.shape[0]
     target_count = _check_args(target_reduction, target_count, n_faces)
@@ -129,7 +141,11 @@ def simplify(points, triangles, target_reduction=None, target_count=None, agg=7,
     _simplify.simplify(target_count, agg, verbose)
     points = _simplify.return_points()
     faces = _simplify.return_faces_int32_no_padding().reshape(-1, 3)
-    return points, faces
+
+    if return_collapses:
+        return points, faces, _simplify.return_collapses()
+    else:
+        return points, faces
 
 
 def simplify_mesh(mesh, target_reduction=None, target_count=None, agg=7, verbose=False):
@@ -191,4 +207,7 @@ def simplify_mesh(mesh, target_reduction=None, target_count=None, agg=7, verbose
         faces = _simplify.return_faces_int64()
 
     # construct mesh
-    return pv.PolyData(_simplify.return_points(), faces, deep=False)
+    mesh = pv.PolyData(_simplify.return_points(), faces, deep=False)
+    mesh.field_data["fast_simplification_collapses"] = _simplify.return_collapses()
+
+    return mesh

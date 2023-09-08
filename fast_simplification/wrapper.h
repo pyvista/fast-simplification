@@ -82,6 +82,9 @@ namespace Simplify{
     return triangles.size();
   }
 
+  int n_collapses(){
+    return collapses.size();
+  }
 
   // load triangles
   void load_triangles(const int n_tri, int64_t* faces){
@@ -118,6 +121,16 @@ namespace Simplify{
       tri[0 + 3*ii] = triangles[ii].v[0];
       tri[1 + 3*ii] = triangles[ii].v[1];
       tri[2 + 3*ii] = triangles[ii].v[2];
+    }
+  }
+
+  void get_collapses(int* coll){
+
+    // load vertices
+    int n_collapse = collapses.size();
+    for (int ii = 0; ii < n_collapse; ii ++){
+      coll[0 + 2*ii] = collapses.at(ii).at(0);
+      coll[1 + 2*ii] = collapses.at(ii).at(1);
     }
   }
 

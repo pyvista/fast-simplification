@@ -17,6 +17,7 @@ cdef extern from "wrapper.h" namespace "Simplify":
     void simplify_mesh(int, double aggressiveness, bool verbose)
     void get_points(float*)
     void get_triangles(int*)
+    void get_collapses(int*)
     int get_faces_int32(int*)
     int get_faces_int32_no_padding(int*)
     int get_faces_int64(int64_t*)
@@ -24,6 +25,7 @@ cdef extern from "wrapper.h" namespace "Simplify":
     void load_obj(const char*, bool)
     int n_points()
     int n_triangles()
+    int n_collapses()
     int load_triangles_from_vtk(const int, int*)
     void load_points(const int, float*)
 
@@ -64,6 +66,11 @@ def return_triangles():
     cdef int [:, ::1] triangles = np.empty((n_triangles(), 3), np.int32)
     get_triangles(&triangles[0, 0])
     return np.array(triangles)
+
+def return_collapses():
+    cdef int [:, ::1] collapses = np.empty((n_collapses(), 2), np.int32)
+    get_collapses(&collapses[0, 0])
+    return np.array(collapses)
 
 
 def return_faces_int32_no_padding():
