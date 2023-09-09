@@ -23,7 +23,15 @@ def _check_args(target_reduction, target_count, n_faces):
     return int(target_count)
 
 
-def simplify(points, triangles, target_reduction=None, target_count=None, agg=7, verbose=False):
+def simplify(
+    points,
+    triangles,
+    target_reduction=None,
+    target_count=None,
+    agg=7,
+    verbose=False,
+    return_collapses=False,
+):
     """Simplify a triangular mesh.
 
     Parameters
@@ -53,6 +61,12 @@ def simplify(points, triangles, target_reduction=None, target_count=None, agg=7,
         ``target_reduction`` or ``target_count``.
     verbose : bool, optional
         Enable verbose output when simplifying the mesh.
+    return_collapses : bool, optional
+        If True, return the history of collapses as a
+        ``(n_collapses, 2)`` array of indices.
+        ``collaspes[i] = [i0, i1]`` means that durint the i-th
+        collapse, the vertex ``i1`` was collapsed into the vertex
+        ``i0``.
 
     Returns
     -------
@@ -60,6 +74,8 @@ def simplify(points, triangles, target_reduction=None, target_count=None, agg=7,
         Points array.
     np.ndarray
         Triangles array.
+    np.ndarray (optional)
+        Collapses array.
 
     Examples
     --------
@@ -129,7 +145,11 @@ def simplify(points, triangles, target_reduction=None, target_count=None, agg=7,
     _simplify.simplify(target_count, agg, verbose)
     points = _simplify.return_points()
     faces = _simplify.return_faces_int32_no_padding().reshape(-1, 3)
-    return points, faces
+
+    if return_collapses:
+        return points, faces, _simplify.return_collapses()
+    else:
+        return points, faces
 
 
 def simplify_mesh(mesh, target_reduction=None, target_count=None, agg=7, verbose=False):
@@ -160,7 +180,12 @@ def simplify_mesh(mesh, target_reduction=None, target_count=None, agg=7, verbose
     Returns
     -------
     pyvista.PolyData
-        Simplified mesh.
+        Simplified mesh. The field data of the mesh will contain a
+        field named ``fast_simplification_collapses`` that contains
+        the history of collapses as a ``(n_collapses, 2)`` array of
+        indices. ``collaspes[i] = [i0, i1]`` means that during the
+        i-th collapse, the vertex ``i1`` was collapsed into the vertex
+        ``i0``.
 
     """
     try:
@@ -191,4 +216,7 @@ def simplify_mesh(mesh, target_reduction=None, target_count=None, agg=7, verbose
         faces = _simplify.return_faces_int64()
 
     # construct mesh
-    return pv.PolyData(_simplify.return_points(), faces, deep=False)
+    mesh = pv.PolyData(_simplify.return_points(), faces, deep=False)
+    mesh.field_data["fast_simplification_collapses"] = _simplify.return_collapses()
+
+    return mesh

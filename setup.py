@@ -17,7 +17,7 @@ elif os.name == "posix":  # linux org mac os
     if sys.platform == "linux":
         extra_compile_args = ["-std=gnu++11", "-O3", "-w"]
     else:  # probably mac os
-        extra_compile_args = ["-O3", "-w"]
+        extra_compile_args = ["-std=c++11", "-O3", "-w"]
 else:
     raise OSError("Unsupported OS %s" % os.name)
 

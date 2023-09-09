@@ -11,7 +11,7 @@
 //
 // 5/2016: Chris Rorden created minimal version for OSX/Linux/Windows compile
 
-//#include <iostream>
+#include <iostream>
 //#include <stddef.h>
 //#include <functional>
 //#include <sys/stat.h>
@@ -23,6 +23,7 @@
 #include <stdlib.h>
 #include <map>
 #include <vector>
+#include <utility> // std::pair
 #include <string>
 #include <math.h>
 #include <stdint.h>
@@ -325,6 +326,8 @@ namespace Simplify
     std::string mtllib;
     std::vector<std::string> materials;
 
+	std::vector<std::vector<int>> collapses;
+
 	// Helper functions
 
 	double vertex_error(SymetricMatrix q, double x, double y, double z);
@@ -345,6 +348,7 @@ namespace Simplify
 
 	void simplify_mesh(int target_count, double agressiveness=7, bool verbose=false)
 	{
+
 		// init
 		loopi(0,triangles.size())
         {
@@ -357,8 +361,10 @@ namespace Simplify
 		int triangle_count=triangles.size();
 		//int iteration = 0;
 		//loop(iteration,0,100)
+		collapses.clear();
 		for (int iteration = 0; iteration < 100; iteration ++)
 		{
+			
 			if(triangle_count-deleted_triangles<=target_count)break;
 
 			// update mesh once in a while
@@ -401,7 +407,7 @@ namespace Simplify
 
 					// Compute vertex to collapse to
 					vec3f p;
-					calculate_error(i0,i1,p);
+					calculate_error(i0,i1,p); // p is the optimal point to collapse to
 					deleted0.resize(v0.tcount); // normals temporarily
 					deleted1.resize(v1.tcount); // normals temporarily
 					// don't remove if flipped
@@ -416,12 +422,17 @@ namespace Simplify
 					}
 
 					// not flipped, so remove edge
-					v0.p=p;
-					v0.q=v1.q+v0.q;
+					// v0 <- v1 (i0 <- i1)
+					v0.p=p; // set the optimal point to collapse to
+					v0.q=v1.q+v0.q; // add the quadrics
 					int tstart=refs.size();
 
+					// update triangles affected by the collapse
 					update_triangles(i0,v0,deleted0,deleted_triangles);
 					update_triangles(i0,v1,deleted1,deleted_triangles);
+
+					// record collapse
+					collapses.push_back(std::vector<int>({i0,i1}));
 
 					int tcount=refs.size()-tstart;
 
@@ -429,6 +440,7 @@ namespace Simplify
 					{
 						// save ram
 						if(tcount)memcpy(&refs[v0.tstart],&refs[tstart],tcount*sizeof(Ref));
+						
 					}
 					else
 						// append
@@ -443,6 +455,7 @@ namespace Simplify
 		}
 		// clean up mesh
 		compact_mesh();
+		
 	} //simplify_mesh()
 
 	void simplify_mesh_lossless(bool verbose=false)
@@ -456,6 +469,7 @@ namespace Simplify
 		int triangle_count=triangles.size();
 		//int iteration = 0;
 		//loop(iteration,0,100)
+		collapses.clear();
 		for (int iteration = 0; iteration < 9999; iteration ++)
 		{
 			// update mesh constantly
@@ -491,7 +505,7 @@ namespace Simplify
 
 					// Compute vertex to collapse to
 					vec3f p;
-					calculate_error(i0,i1,p);
+					calculate_error(i0,i1,p); // p is the optimal point to collapse to
 
 					deleted0.resize(v0.tcount); // normals temporarily
 					deleted1.resize(v1.tcount); // normals temporarily
@@ -507,12 +521,16 @@ namespace Simplify
 					}
 
 					// not flipped, so remove edge
-					v0.p=p;
-					v0.q=v1.q+v0.q;
+					// v0 <- v1 (i0 <- i1)
+					v0.p=p; // set the optimal point to collapse to
+					v0.q=v1.q+v0.q; // add the quadrics (for calculating the error)
 					int tstart=refs.size();
 
 					update_triangles(i0,v0,deleted0,deleted_triangles);
 					update_triangles(i0,v1,deleted1,deleted_triangles);
+
+					// record collapse
+					collapses.push_back(std::vector<int>({i0,i1}));
 
 					int tcount=refs.size()-tstart;
 
