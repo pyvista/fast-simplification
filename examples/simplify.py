@@ -61,9 +61,7 @@ pl.camera_position = cpos
 
 pl.subplot(1, 0)
 pl.add_mesh(dec_std, show_edges=True)
-pl.add_text(
-    f"vtkQuadricDecimation\n{dec_std_time:8.4f} seconds", "upper_right", color="k"
-)
+pl.add_text(f"vtkQuadricDecimation\n{dec_std_time:8.4f} seconds", "upper_right", color="k")
 pl.camera_position = cpos
 
 pl.subplot(1, 1)
