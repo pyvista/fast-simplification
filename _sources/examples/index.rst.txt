@@ -19,7 +19,7 @@ functionality using `pyvista <https://docs.pyvista.org/>`__.
 .. only:: html
 
   .. image:: /examples/images/thumb/sphx_glr_simplify_thumb.png
-    :alt: Compare Decimation Methods
+    :alt:
 
   :ref:`sphx_glr_examples_simplify.py`
 

@@ -10,7 +10,7 @@
     .. note::
         :class: sphx-glr-download-link-note
 
-        Click :ref:`here <sphx_glr_download_examples_simplify.py>`
+        :ref:`Go to the end <sphx_glr_download_examples_simplify.py>`
         to download the full example code
 
 .. rst-class:: sphx-glr-example-title
@@ -119,9 +119,9 @@ Compare decimation times
  .. code-block:: none
 
     Approach                         Time Elapsed
-    Fast Quadratic Simplification    0.9026 seconds
-    vtkQuadricDecimation             3.3764 seconds
-    vtkDecimatePro                   3.3036 seconds
+    Fast Quadratic Simplification    0.9844 seconds
+    vtkQuadricDecimation             3.6051 seconds
+    vtkDecimatePro                   2.9774 seconds
 
 
 
@@ -129,7 +129,7 @@ Compare decimation times
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** ( 0 minutes  12.050 seconds)
+   **Total running time of the script:** (0 minutes 14.758 seconds)
 
 
 .. _sphx_glr_download_examples_simplify.py:
@@ -137,6 +137,8 @@ Compare decimation times
 .. only:: html
 
   .. container:: sphx-glr-footer sphx-glr-footer-example
+
+
 
 
     .. container:: sphx-glr-download sphx-glr-download-python
