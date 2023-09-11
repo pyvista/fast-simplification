@@ -88,7 +88,14 @@ setup(
             language="c++",
             extra_compile_args=extra_compile_args,
             define_macros=macros,
-        )
+        ),
+        Extension(
+            "fast_simplification._replay",
+            ["fast_simplification/_replay.pyx"],
+            language="c++",
+            extra_compile_args=extra_compile_args,
+            define_macros=macros,
+        ),
     ],
     keywords="fast-simplification decimation",
     install_requires=["numpy>=1.16.0"],

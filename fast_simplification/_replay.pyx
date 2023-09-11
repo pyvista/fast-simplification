@@ -11,10 +11,10 @@ from libc.stdint cimport int64_t
 from libcpp cimport bool
 
 
-cdef extern from "wrapper.h" namespace "Simplify":
-    void load_arrays_int32(const int, const int, float*, int*)
-    void load_arrays_int64(const int, const int, float*, int64_t*)
-    void simplify_mesh(int, double aggressiveness, bool verbose)
+cdef extern from "wrapper_replay.h" namespace "Replay":
+    void load_arrays_int32(const int, const int, const int, float*, int*, int*)
+    void load_arrays_int64(const int, const int, const int,  float*, int64_t*, int*)
+    void replay_simplification()
     void get_points(float*)
     void get_triangles(int*)
     void get_collapses(int*)
@@ -28,22 +28,23 @@ cdef extern from "wrapper.h" namespace "Simplify":
     int n_collapses()
     int load_triangles_from_vtk(const int, int*)
     void load_points(const int, float*)
+    void load_collapses(const int, int*)
 
-
-
-def load_int32(int n_points, int n_faces, float [:, ::1] points, int [:, ::1] faces):
-    load_arrays_int32(n_points, n_faces, &points[0, 0], &faces[0, 0])
+def load_int32(int n_points, int n_faces, int n_collapses, float [:, ::1] points, int [:, ::1] faces, int [:, ::1] collapses):
+    load_arrays_int32(n_points, n_faces, n_collapses, &points[0, 0], &faces[0, 0], &collapses[0, 0])
 
 
 def load_int64(
-        int n_points, int n_faces, float [:, ::1] points, int64_t [:, ::1] faces
+        int n_points, int n_faces, int n_collapses, float [:, ::1] points, int64_t [:, ::1] faces, int [:, ::1] collapses
 ):
-    load_arrays_int64(n_points, n_faces, &points[0, 0], &faces[0, 0])
+    load_arrays_int64(n_points, n_faces, n_collapses, &points[0, 0], &faces[0, 0], &collapses[0, 0])
 
 
-def simplify(int target_count, double aggressiveness=7, bool verbose=False):
-    simplify_mesh(target_count, aggressiveness, verbose)
+# def simplify(int target_count, double aggressiveness=7, bool verbose=False):
+#     simplify_mesh(target_count, aggressiveness, verbose)
 
+def replay():
+    replay_simplification()
 
 
 def save_obj(filename):
@@ -104,3 +105,37 @@ def load_from_vtk(int n_points, float [:, ::1] points, int [::1] faces, int n_fa
             "Run ``.triangulate()`` to convert to an all triangle mesh."
         )
     load_points(n_points, &points[0, 0])
+
+
+def compute_indice_mapping(collapses, n_points):
+
+    # Compute the mapping from original indices to new indices
+    keep = np.setdiff1d(
+        np.arange(n_points), collapses[:, 1]
+    )  # Indices of the points that must be kept after decimation
+    # start with identity mapping
+    indice_mapping = np.arange(n_points, dtype=int)
+    # First round of mapping
+    origin_indices = collapses[:, 1]
+    indice_mapping[origin_indices] = collapses[:, 0]
+    previous = np.zeros(len(indice_mapping))
+    while not np.array_equal(previous, indice_mapping):
+        previous = indice_mapping.copy()
+        indice_mapping[origin_indices] = indice_mapping[
+            indice_mapping[origin_indices]
+        ]
+    application = dict([keep[i], i] for i in range(len(keep)))
+    indice_mapping = np.array([application[i] for i in indice_mapping])
+
+    return indice_mapping
+
+def compute_decimated_triangles(triangles, indice_mapping):
+
+    triangles = indice_mapping[triangles.copy()]
+    # compute the new triangles
+    keep_triangle = (
+        (triangles[:, 0] != triangles[:, 1])
+        * (triangles[:, 1] != triangles[:, 2])
+        * (triangles[:, 0] != triangles[:, 2])
+    )
+    return triangles[keep_triangle]
