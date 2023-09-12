@@ -106,13 +106,33 @@ def load_from_vtk(int n_points, float [:, ::1] points, int [::1] faces, int n_fa
         )
     load_points(n_points, &points[0, 0])
 
+def compute_indice_mapping2(int [:, :] collapses, int n_points):
+
+    cdef long[:] indice_mapping = np.arange(n_points, dtype=int)
+    cdef int n_collapses = collapses.shape[0]
+    cdef int i, j, k, lim
+
+    lim = 0
+
+    for i in range(n_points):
+
+        k = 0
+        while k == 0 and lim < 1000:
+            lim += 1
+            k = 1
+            for j in range(n_collapses):
+                if indice_mapping[i] == collapses[j, 1]:
+                    k = 0
+                    indice_mapping[i] = collapses[j, 0]
+    
+    return np.array(indice_mapping)
+
+
 
 def compute_indice_mapping(collapses, n_points):
 
     # Compute the mapping from original indices to new indices
-    keep = np.setdiff1d(
-        np.arange(n_points), collapses[:, 1]
-    )  # Indices of the points that must be kept after decimation
+
     # start with identity mapping
     indice_mapping = np.arange(n_points, dtype=int)
     # First round of mapping
@@ -124,6 +144,13 @@ def compute_indice_mapping(collapses, n_points):
         indice_mapping[origin_indices] = indice_mapping[
             indice_mapping[origin_indices]
         ]
+
+    from time import time
+    start = time()
+    keep = np.setdiff1d(
+        np.arange(n_points), collapses[:, 1]
+    )  # Indices of the points that must be kept after decimation
+    
     application = dict([keep[i], i] for i in range(len(keep)))
     indice_mapping = np.array([application[i] for i in indice_mapping])
 
@@ -139,3 +166,39 @@ def compute_decimated_triangles(triangles, indice_mapping):
         * (triangles[:, 0] != triangles[:, 2])
     )
     return triangles[keep_triangle]
+
+
+def compute_new_collapses(long [:, :] dec_triangles, long [:] isolated_points):
+
+    cdef long[:, :] new_collapses = np.empty((len(isolated_points), 2), dtype=int)
+    cdef int n_ip = len(isolated_points)
+    cdef int i, j
+    cdef long[:] t = np.zeros(3, dtype=int)
+
+    for i in range(n_ip):
+        new_collapses[i, 1] = isolated_points[i]
+        new_collapses[i, 0] = -1
+
+    for j in range(len(dec_triangles)):
+        t = dec_triangles[j]
+        for i in range(n_ip):
+            if new_collapses[i, 0] == -1:
+                if t[0] == isolated_points[i]:
+                    if t[1] != isolated_points[i]:
+                        new_collapses[i, 0] = t[1]
+                    elif t[2] != isolated_points[i]:
+                        new_collapses[i, 0] = t[2]
+
+                elif t[1] == isolated_points[i]:
+                    if t[0] != isolated_points[i]:
+                        new_collapses[i, 0] = t[0]
+                    elif t[2] != isolated_points[i]:
+                        new_collapses[i, 0] = t[2]
+
+                elif t[2] == isolated_points[i]:
+                    if t[0] != isolated_points[i]:
+                        new_collapses[i, 0] = t[0]
+                    elif t[1] != isolated_points[i]:
+                        new_collapses[i, 0] = t[1]
+
+    return np.array(new_collapses)

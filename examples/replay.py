@@ -35,13 +35,13 @@ dec_points2, dec_faces2 = fast_simplification.replay(
 print(f"Replay (full): {time() - start}")
 
 start = time()
-dec_points3, dec_faces3 = fast_simplification.replay(
-    points=points, triangles=faces, collapses=collapses[0 : int(len(collapses) / 2)]
+dec_points3, dec_faces3, indice_mapping3 = fast_simplification.replay2(
+    points=points, triangles=faces, collapses=collapses
 )
 print(f"Replay (half): {time() - start}")
-indice_mapping3 = fast_simplification.indice_mapping(
-    mesh.points, collapses[0 : int(len(collapses) / 2)]
-)
+# indice_mapping3 = fast_simplification.indice_mapping(
+#     mesh.points, collapses[0 : int(len(collapses) / 2)]
+# )
 
 indice_mapping = fast_simplification.indice_mapping(mesh.points, collapses)
 i, j = np.random.randint(0, len(mesh.points), 2)
@@ -52,20 +52,17 @@ p.subplot(0, 0)
 p.add_mesh(mesh)
 p.add_points(mesh.points[i], color="red", point_size=10, render_points_as_spheres=True)
 p.add_points(mesh.points[j], color="blue", point_size=10, render_points_as_spheres=True)
+p.add_text(
+    f"Original mesh, {mesh.points.shape[0]} points, {len(np.unique(triangles_to_faces(faces)))}",
+    font_size=10,
+)
+p.add_points(
+    mesh.points[6827], color="green", point_size=10, render_points_as_spheres=True
+)
 p.subplot(0, 1)
 p.add_mesh(pv.PolyData(dec_points, faces=triangles_to_faces(dec_faces)))
-p.add_points(
-    dec_points[indice_mapping[i]],
-    color="red",
-    point_size=10,
-    render_points_as_spheres=True,
-)
-p.add_points(
-    dec_points[indice_mapping[j]],
-    color="blue",
-    point_size=10,
-    render_points_as_spheres=True,
-)
+p.add_text(f"Decimated mesh, {dec_points.shape[0]} points", font_size=10)
+
 p.subplot(1, 0)
 p.add_mesh(pv.PolyData(dec_points2, faces=triangles_to_faces(dec_faces2)))
 p.add_points(
@@ -80,6 +77,22 @@ p.add_points(
     point_size=10,
     render_points_as_spheres=True,
 )
+p.add_text(
+    f"Replayed mesh, {dec_points2.shape[0]} points, {len(np.unique(triangles_to_faces(dec_faces2)))}",
+    font_size=10,
+)
+
+isolated_points = np.setdiff1d(
+    np.arange(dec_points2.shape[0]), np.unique(triangles_to_faces(dec_faces2))
+)
+p.add_points(
+    dec_points2[isolated_points],
+    color="green",
+    point_size=10,
+    render_points_as_spheres=True,
+)
+
+
 p.subplot(1, 1)
 p.add_mesh(pv.PolyData(dec_points3, faces=triangles_to_faces(dec_faces3)))
 p.add_points(
@@ -94,4 +107,20 @@ p.add_points(
     point_size=10,
     render_points_as_spheres=True,
 )
+p.add_text(
+    f"Half Replayed mesh, {dec_points3.shape[0]} points, {len(np.unique(dec_faces3))}",
+    font_size=10,
+)
 p.show()
+
+
+def lexsort(points):
+    return points[np.lexsort((points[:, 2], points[:, 1], points[:, 0]))]
+
+
+sorted_dec_points = lexsort(dec_points)
+sorted_dec_points2 = lexsort(dec_points2)
+
+print(len(mesh.points) - len(collapses))
+
+print(np.allclose(sorted_dec_points, sorted_dec_points2))
