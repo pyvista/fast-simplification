@@ -19,9 +19,7 @@ def _check_args(target_reduction, target_count, n_faces):
     if target_count < 0:
         raise ValueError("``target_count`` must be greater than 0")
     if target_count > n_faces:
-        raise ValueError(
-            f"``target_count`` must be less than the number of faces {mesh.n_faces}"
-        )
+        raise ValueError(f"``target_count`` must be less than the number of faces {mesh.n_faces}")
     return int(target_count)
 
 
@@ -121,9 +119,7 @@ def simplify(
     if triangles.ndim != 2:
         raise ValueError("``triangles`` array must be 2 dimensional")
     if triangles.shape[1] != 3:
-        raise ValueError(
-            f"Expected ``triangles`` array to be (n, 3), not {triangles.shape}"
-        )
+        raise ValueError(f"Expected ``triangles`` array to be (n, 3), not {triangles.shape}")
 
     n_faces = triangles.shape[0]
     target_count = _check_args(target_reduction, target_count, n_faces)
