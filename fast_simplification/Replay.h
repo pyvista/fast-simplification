@@ -2,7 +2,7 @@
 
 namespace Replay{
 
-    // Global Variables & Strctures (same as for Simplify)
+    // Global Variables & Structures (same as for Simplify)
 	enum Attributes {
 		NONE,
 		NORMAL = 2,
