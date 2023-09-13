@@ -133,8 +133,9 @@ p.add_points(
     point_size=10,
     render_points_as_spheres=True,
 )
+n_points, n_triangles = dec_points_replay.shape[0], dec_triangles_replay.shape[0]
 p.add_text(
-    f"Replay, {dec_points_replay.shape[0]} vertices, {dec_triangles_replay.shape[0]} triangles, took {time_replay_new:.2f}s",
+    f"Replay, {n_points} vertices, {n_triangles} triangles, took {time_replay_new:.2f}s",
     font_size=10,
 )
 p.camera_position = cpos
@@ -158,8 +159,9 @@ p.add_points(
     point_size=10,
     render_points_as_spheres=True,
 )
+n_points, n_triangles = dec_points_replay2.shape[0], dec_triangles_replay2.shape[0]
 p.add_text(
-    f"Partial replay, {dec_points_replay2.shape[0]} vertices, {dec_triangles_replay2.shape[0]} triangles, took {time_replay_new:.2f}s",
+    f"Partial replay, {n_points} vertices, {n_triangles} triangles, took {time_replay_new:.2f}s",
     font_size=10,
 )
 p.camera_position = cpos
