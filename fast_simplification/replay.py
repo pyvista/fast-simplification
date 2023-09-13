@@ -1,6 +1,5 @@
 from . import _replay
 
-
 # def replay_first_collapses(
 #     points,
 #     triangles,
@@ -90,8 +89,9 @@ def replay_simplification(points, triangles, collapses, time_info=False):
 
     """
 
-    import numpy as np
     from time import time
+
+    import numpy as np
 
     if not isinstance(points, np.ndarray):
         points = np.array(points, dtype=np.float32)
@@ -106,9 +106,7 @@ def replay_simplification(points, triangles, collapses, time_info=False):
     if triangles.ndim != 2:
         raise ValueError("``triangles`` array must be 2 dimensional")
     if triangles.shape[1] != 3:
-        raise ValueError(
-            f"Expected ``triangles`` array to be (n, 3), not {triangles.shape}"
-        )
+        raise ValueError(f"Expected ``triangles`` array to be (n, 3), not {triangles.shape}")
 
     if not triangles.flags.c_contiguous:
         triangles = np.ascontiguousarray(triangles)
@@ -215,25 +213,15 @@ def replay_simplification(points, triangles, collapses, time_info=False):
     if time_info:
         print()
         print(f"Total: {time_global}")
-        print(
-            f"First collapse: {time_first_collapse}, {100*time_first_collapse/time_global}%"
-        )
-        print(
-            f"First indice mapping: {time_first_im}, {100*time_first_im/time_global}%"
-        )
-        print(
-            f"Dec triangles: {time_dec_triangles}, {100*time_dec_triangles/time_global}%"
-        )
+        print(f"First collapse: {time_first_collapse}, {100*time_first_collapse/time_global}%")
+        print(f"First indice mapping: {time_first_im}, {100*time_first_im/time_global}%")
+        print(f"Dec triangles: {time_dec_triangles}, {100*time_dec_triangles/time_global}%")
         print(f"Find isolated points: {time_find_ip}, {100*time_find_ip/time_global}%")
-        print(
-            f"New collapses: {time_new_collapses}, {100*time_new_collapses/time_global}%"
-        )
+        print(f"New collapses: {time_new_collapses}, {100*time_new_collapses/time_global}%")
         print(
             f"Apply new collapses: {time_apply_new_collapses}, {100*time_apply_new_collapses/time_global}%"
         )
-        print(
-            f"Remove isolated points: {time_remove_ip}, {100*time_remove_ip/time_global}%"
-        )
+        print(f"Remove isolated points: {time_remove_ip}, {100*time_remove_ip/time_global}%")
         print()
 
     return dec_points, dec_triangles, indice_mapping
