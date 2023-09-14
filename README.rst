@@ -16,7 +16,7 @@ Basic Usage
 The basic interface is quite straightforward and can work directly
 with arrays of points and triangles:
 
-.. code:: python   
+.. code:: python
 
     points = [[ 0.5, -0.5, 0.0],
               [ 0.0, -0.5, 0.0],

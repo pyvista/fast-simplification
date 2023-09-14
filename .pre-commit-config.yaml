@@ -24,6 +24,12 @@ repos:
     args: ["--toml", "pyproject.toml"]
     additional_dependencies: ["tomli"]
 
+- repo: https://github.com/keewis/blackdoc
+  rev: v0.3.8
+  hooks:
+  - id: blackdoc
+    files: '\.py$'
+
 # - repo: https://github.com/pycqa/pydocstyle
 #   rev: 6.1.1
 #   hooks:
