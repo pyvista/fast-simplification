@@ -30,6 +30,7 @@ cdef extern from "wrapper.h" namespace "Simplify":
     void load_points(const int, float*)
 
 
+
 def load_int32(int n_points, int n_faces, float [:, ::1] points, int [:, ::1] faces):
     load_arrays_int32(n_points, n_faces, &points[0, 0], &faces[0, 0])
 
@@ -42,6 +43,7 @@ def load_int64(
 
 def simplify(int target_count, double aggressiveness=7, bool verbose=False):
     simplify_mesh(target_count, aggressiveness, verbose)
+
 
 
 def save_obj(filename):
