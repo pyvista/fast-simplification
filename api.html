@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>API Reference &#8212; fast-simplification 0.1.1 documentation</title>
+    <title>API Reference &#8212; fast-simplification 0.1.2 documentation</title>
   
   
   
@@ -39,7 +39,7 @@
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=e353d410970836974a52" />
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=e353d410970836974a52" />
 
-    <script src="_static/documentation_options.js?v=91f6191e"></script>
+    <script src="_static/documentation_options.js?v=b14783f5"></script>
     <script src="_static/doctools.js?v=888ff710"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -316,6 +316,7 @@ document.write(`
   <div class="bd-toc-item navbar-nav"><ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="_autosummary/fast_simplification.simplify.html">fast_simplification.simplify</a></li>
 <li class="toctree-l1"><a class="reference internal" href="_autosummary/fast_simplification.simplify_mesh.html">fast_simplification.simplify_mesh</a></li>
+<li class="toctree-l1"><a class="reference internal" href="_autosummary/fast_simplification.replay_simplification.html">fast_simplification.replay_simplification</a></li>
 </ul>
 </div>
 </nav></div>
@@ -372,7 +373,7 @@ document.write(`
                   
   <section id="api-reference">
 <h1>API Reference<a class="headerlink" href="#api-reference" title="Link to this heading">#</a></h1>
-<p>These are the two public methods that expose the fast-simplification API to
+<p>These are the three public methods that expose the fast-simplification API to
 Python.</p>
 <table class="autosummary longtable table autosummary">
 <tbody>
@@ -381,6 +382,9 @@ Python.</p>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="_autosummary/fast_simplification.simplify_mesh.html#fast_simplification.simplify_mesh" title="fast_simplification.simplify_mesh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">simplify_mesh</span></code></a>(mesh[, target_reduction, ...])</p></td>
 <td><p>Simplify a pyvista mesh.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="_autosummary/fast_simplification.replay_simplification.html#fast_simplification.replay_simplification" title="fast_simplification.replay_simplification"><code class="xref py py-obj docutils literal notranslate"><span class="pre">replay_simplification</span></code></a>(points, triangles, ...)</p></td>
+<td><p>Replay the decimation of a triangular mesh.</p></td>
 </tr>
 </tbody>
 </table>
@@ -437,7 +441,7 @@ Python.</p>
       
         <div class="footer-item">
   <p class="sphinx-version">
-    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.5.
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 7.2.6.
     <br/>
   </p>
 </div>

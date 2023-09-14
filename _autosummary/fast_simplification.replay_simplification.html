@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Computation times &#8212; fast-simplification 0.1.2 documentation</title>
+    <title>fast_simplification.replay_simplification &#8212; fast-simplification 0.1.2 documentation</title>
   
   
   
@@ -44,9 +44,10 @@
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../_static/copybutton.js?v=49e1bf35"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'examples/sg_execution_times';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_autosummary/fast_simplification.replay_simplification';</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="fast_simplification.simplify_mesh" href="fast_simplification.simplify_mesh.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -142,13 +143,13 @@
                 
 
                     <li class="nav-item">
-                      <a class="nav-link nav-internal" href="index.html">
+                      <a class="nav-link nav-internal" href="../examples/index.html">
                         Fast-simplification Examples
                       </a>
                     </li>
                 
 
-                    <li class="nav-item">
+                    <li class="nav-item current active">
                       <a class="nav-link nav-internal" href="../api.html">
                         API Reference
                       </a>
@@ -229,7 +230,7 @@ document.write(`
   <div class="bd-container">
     <div class="bd-container__inner bd-page-width">
       
-      <div class="bd-sidebar-primary bd-sidebar hide-on-wide">
+      <div class="bd-sidebar-primary bd-sidebar">
         
 
   
@@ -255,13 +256,13 @@ document.write(`
                 
 
                     <li class="nav-item">
-                      <a class="nav-link nav-internal" href="index.html">
+                      <a class="nav-link nav-internal" href="../examples/index.html">
                         Fast-simplification Examples
                       </a>
                     </li>
                 
 
-                    <li class="nav-item">
+                    <li class="nav-item current active">
                       <a class="nav-link nav-internal" href="../api.html">
                         API Reference
                       </a>
@@ -307,6 +308,19 @@ document.write(`
     
   </div>
   
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item"><nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="fast_simplification.simplify.html">fast_simplification.simplify</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fast_simplification.simplify_mesh.html">fast_simplification.simplify_mesh</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">fast_simplification.replay_simplification</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
   
   <div class="sidebar-primary-items__end sidebar-primary__section">
   </div>
@@ -339,7 +353,10 @@ document.write(`
         <i class="fa-solid fa-home"></i>
       </a>
     </li>
-    <li class="breadcrumb-item active" aria-current="page">Computation times</li>
+    
+    <li class="breadcrumb-item"><a href="../api.html" class="nav-link">API Reference</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page">fast_simplification.replay_simplification</li>
   </ul>
 </nav>
 </div>
@@ -356,21 +373,43 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article" role="main">
                   
-  <section id="computation-times">
-<span id="sphx-glr-examples-sg-execution-times"></span><h1>Computation times<a class="headerlink" href="#computation-times" title="Link to this heading">#</a></h1>
-<p><strong>00:14.460</strong> total execution time for <strong>examples</strong> files:</p>
-<table class="table">
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="simplify.html#sphx-glr-examples-simplify-py"><span class="std std-ref">Compare Decimation Methods</span></a> (<code class="docutils literal notranslate"><span class="pre">simplify.py</span></code>)</p></td>
-<td><p>00:08.868</p></td>
-<td><p>0.0 MB</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="replay.html#sphx-glr-examples-replay-py"><span class="std std-ref">Replay Decimation</span></a> (<code class="docutils literal notranslate"><span class="pre">replay.py</span></code>)</p></td>
-<td><p>00:05.592</p></td>
-<td><p>0.0 MB</p></td>
-</tr>
-</tbody>
-</table>
+  <section id="fast-simplification-replay-simplification">
+<h1>fast_simplification.replay_simplification<a class="headerlink" href="#fast-simplification-replay-simplification" title="Link to this heading">#</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="fast_simplification.replay_simplification">
+<span class="sig-prename descclassname"><span class="pre">fast_simplification.</span></span><span class="sig-name descname"><span class="pre">replay_simplification</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">points</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">triangles</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">collapses</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#fast_simplification.replay_simplification" title="Link to this definition">#</a></dt>
+<dd><p>Replay the decimation of a triangular mesh.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>points</strong> (<em>sequence</em>) – A <code class="docutils literal notranslate"><span class="pre">(n,</span> <span class="pre">3)</span></code> array of points. May be a <code class="docutils literal notranslate"><span class="pre">numpy.ndarray</span></code> or a
+list of points. For efficiency, provide points as a float32
+array.</p></li>
+<li><p><strong>triangles</strong> (<em>sequence</em>) – A <code class="docutils literal notranslate"><span class="pre">(n,</span> <span class="pre">3)</span></code> array of triangle indices. May be a
+<code class="docutils literal notranslate"><span class="pre">numpy.ndarray</span></code> or a list of triangle indices. For
+efficiency, provide points as a float32 array.</p></li>
+<li><p><strong>collapses</strong> (<em>sequence</em>) – The collapses to replay.
+A <code class="docutils literal notranslate"><span class="pre">(n,</span> <span class="pre">2)</span></code> numpy.ndarray of collapses.
+<code class="docutils literal notranslate"><span class="pre">collaspes[i]</span> <span class="pre">=</span> <span class="pre">[i0,</span> <span class="pre">i1]</span></code> means that durint the i-th
+collapse, the vertex <code class="docutils literal notranslate"><span class="pre">i1</span></code> was collapsed into the vertex
+<code class="docutils literal notranslate"><span class="pre">i0</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><em>np.ndarray</em> – Points array.</p></li>
+<li><p><em>np.ndarray</em> – Triangles array.</p></li>
+<li><p><em>np.ndarray</em> – indice_mapping array.
+A <code class="docutils literal notranslate"><span class="pre">(n,)</span></code> array of indices.
+<code class="docutils literal notranslate"><span class="pre">indice_mapping[i]</span> <span class="pre">=</span> <span class="pre">j</span></code> means that the vertex <code class="docutils literal notranslate"><span class="pre">i</span></code> of
+the original mesh was mapped to the vertex <code class="docutils literal notranslate"><span class="pre">j</span></code> of the
+decimated mesh.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 
 
@@ -385,8 +424,18 @@ document.write(`
                 <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
   <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#fast_simplification.replay_simplification"><code class="docutils literal notranslate"><span class="pre">replay_simplification()</span></code></a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
   <div class="tocsection sourcelink">
-    <a href="../_sources/examples/sg_execution_times.rst.txt">
+    <a href="../_sources/_autosummary/fast_simplification.replay_simplification.rst.txt">
       <i class="fa-solid fa-file-lines"></i> Show Source
     </a>
   </div>

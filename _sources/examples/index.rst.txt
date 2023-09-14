@@ -14,6 +14,23 @@ functionality using `pyvista <https://docs.pyvista.org/>`__.
 
 .. raw:: html
 
+    <div class="sphx-glr-thumbcontainer" tooltip="This example shows how to replay a decimation sequence with replay.">
+
+.. only:: html
+
+  .. image:: /examples/images/thumb/sphx_glr_replay_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_examples_replay.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Replay Decimation</div>
+    </div>
+
+
+.. raw:: html
+
     <div class="sphx-glr-thumbcontainer" tooltip="This example compares various decimation methods">
 
 .. only:: html
@@ -37,6 +54,7 @@ functionality using `pyvista <https://docs.pyvista.org/>`__.
 .. toctree::
    :hidden:
 
+   /examples/replay
    /examples/simplify
 
 

@@ -1,0 +1,6 @@
+﻿fast\_simplification.replay\_simplification
+===========================================
+
+.. currentmodule:: fast_simplification
+
+.. autofunction:: replay_simplification
