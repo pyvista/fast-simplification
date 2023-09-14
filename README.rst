@@ -16,7 +16,7 @@ Basic Usage
 The basic interface is quite straightforward and can work directly
 with arrays of points and triangles:
 
-.. code:: python   
+.. code:: python
 
     points = [[ 0.5, -0.5, 0.0],
               [ 0.0, -0.5, 0.0],
@@ -136,3 +136,71 @@ to the ``pyvista`` library, making it easy to read and write meshes:
 
 Since both libraries are based on the same core C++ code, feel free to
 use whichever gives you the best performance and interoperability.
+
+Replay decimation functionality
+-------------------------------
+This library also provides an interface to keep track of the successive
+collapses that occur during the decimation process and to replay the
+decimation process. This can be useful for different applications, such
+as:
+
+* applying the same decimation to a collection of meshes that share the
+  same topology
+* computing a correspondence map between the vertices of the original
+  mesh and the vertices of the decimated mesh, to transfer field data from
+  one to the other for example
+* replaying the decimation process with a smaller target reduction than
+  the original one, faster than decimating the original mesh with the
+  smaller target reduction
+
+To use this functionality, you need to set the ``return_collapses``
+parameter to ``True`` when calling ``simplify``. This will return the
+successive collapses of the decimation process in addition to points
+and faces.
+
+.. code:: python
+
+   >>> import fast_simplification
+   >>> import pyvista
+   >>> mesh = pyvista.Sphere()
+   >>> points, faces = mesh.points, mesh.faces.reshape(-1, 4)[:, 1:]
+   >>> points_out, faces_out, collapses = fast_simplification.simplify(points, faces, 0.9, return_collapses=True)
+
+Now you can call ``replay_simplification`` to replay the decimation process
+and obtain the mapping between the vertices of the original mesh and the
+vertices of the decimated mesh.
+
+.. code:: python
+
+   >>> points_out, faces_out, indice_mapping = fast_simplification.replay_simplification(points, faces, collapses)
+   >>> i = 3
+   >>> print(f'Vertex {i} of the original mesh is mapped to {indice_mapping[i]} of the decimated mesh')
+
+You can also use the ``replay_simplification`` function to replay the
+decimation process with a smaller target reduction than the original one.
+This is faster than decimating the original mesh with the smaller target
+reduction. To do so, you need to pass a subset of the collapses to the
+``replay_simplification`` function. For example, to replay the decimation
+process with a target reduction of 50% the initial rate, you can run:
+
+.. code:: python
+
+   >>> import numpy as np
+   >>> collapses_half = collapses[:int(0.5 * len(collapses))]
+   >>> points_out, faces_out, indice_mapping = fast_simplification.replay_simplification(points, faces, collapses_half)
+
+If you have a collection of meshes that share the same topology, you can
+apply the same decimation to all of them by calling ``replay_simplification``
+with the same collapses for each mesh. This ensure that the decimated meshes
+will share the same topology.
+
+.. code:: python
+
+   >>> import numpy as np
+   >>> # Assume that you have a collection of meshes stored in a list meshes
+   >>> _, _, collapses = fast_simplification.simplify(meshes[0].points, meshes[0].faces,
+   ...                                                0.9, return_collapses=True)
+   >>> decimated_meshes = []
+   >>> for mesh in meshes:
+   ...     points_out, faces_out, _ = fast_simplification.replay_simplification(mesh.points, mesh.faces, collapses)
+   ...     decimated_meshes.append(pyvista.PolyData(points_out, faces_out))

@@ -1,6 +1,6 @@
 API Reference
 =============
-These are the two public methods that expose the fast-simplification API to
+These are the three public methods that expose the fast-simplification API to
 Python.  
 
 .. currentmodule:: fast_simplification
@@ -10,3 +10,4 @@ Python.
 
    simplify
    simplify_mesh
+   replay_simplification
