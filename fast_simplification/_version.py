@@ -6,5 +6,5 @@ For example:
 version_info = 0, 27, 'dev0'
 
 """
-version_info = 0, 1, 1
+version_info = 0, 1, 2
 __version__ = ".".join(map(str, version_info))
