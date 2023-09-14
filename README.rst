@@ -142,19 +142,20 @@ Replay decimation functionality
 This library also provides an interface to keep track of the successive
 collapses that occur during the decimation process and to replay the
 decimation process. This can be useful for different applications, such
-as :
+as:
+
 * applying the same decimation to a collection of meshes that share the
-same topology
+  same topology
 * computing a correspondence map between the vertices of the original
-mesh and the vertices of the decimated mesh, to transfer field data from
-one to the other for example
+  mesh and the vertices of the decimated mesh, to transfer field data from
+  one to the other for example
 * replaying the decimation process with a smaller target reduction than
-the original one, faster than decimating the original mesh with the
-smaller target reduction
+  the original one, faster than decimating the original mesh with the
+  smaller target reduction
 
 To use this functionality, you need to set the ``return_collapses``
 parameter to ``True`` when calling ``simplify``. This will return the
-the successive collapses of the decimation process in addition to points
+successive collapses of the decimation process in addition to points
 and faces.
 
 .. code:: python
@@ -180,7 +181,7 @@ decimation process with a smaller target reduction than the original one.
 This is faster than decimating the original mesh with the smaller target
 reduction. To do so, you need to pass a subset of the collapses to the
 ``replay_simplification`` function. For example, to replay the decimation
-process with a target reduction of 50% the initial rate, you can do:
+process with a target reduction of 50% the initial rate, you can run:
 
 .. code:: python
 
