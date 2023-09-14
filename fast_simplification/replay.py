@@ -1,5 +1,6 @@
 from . import _replay
 
+
 def replay_simplification(points, triangles, collapses):
     """Replay the decimation of a triangular mesh.
 
