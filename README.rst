@@ -138,7 +138,7 @@ Since both libraries are based on the same core C++ code, feel free to
 use whichever gives you the best performance and interoperability.
 
 Replay decimation functionality
------------------------------
+-------------------------------
 This library also provides an interface to keep track of the successive
 collapses that occur during the decimation process and to replay the
 decimation process. This can be useful for different applications, such
