@@ -116,6 +116,21 @@ def replay_simplification(points, triangles, collapses):
     # they share an edge
     new_collapses = _replay.compute_new_collapses_from_edges(dec_edges, isolated_points)
 
+    # Check that isolated points are connected to a non-isolated point
+    # If not, find a path to connect them to a non-isolated point
+    for pos, i in enumerate(new_collapses[:, 0]):
+        if i in isolated_points:
+            j = np.where(new_collapses[:, 1] == i)[0][0]
+            count = 0
+            while (new_collapses[j, 0] in isolated_points) and count < len(new_collapses):
+                j = np.where(new_collapses[:, 1] == new_collapses[j, 0])[0][0]
+                count += 1
+
+            if new_collapses[j, 0] in isolated_points:
+                raise ValueError(f"Wasn't able to connect the isolated points {i}")
+            
+            new_collapses[pos, 0] = new_collapses[j, 0]
+
     # Apply the new collapses)
     mapping = np.arange(dec_points.shape[0])
     for e in new_collapses:
