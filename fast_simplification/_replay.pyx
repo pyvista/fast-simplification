@@ -107,13 +107,11 @@ def load_from_vtk(int n_points, float [:, ::1] points, int [::1] faces, int n_fa
     load_points(n_points, &points[0, 0])
 
 
-
 def compute_indice_mapping(int[:, :] collapses, int n_points):
 
     ''' Compute the mapping from original indices to new indices after collapsing
         edges
     '''
-    
     
     # start with identity mapping
     indice_mapping = np.arange(n_points, dtype=int)
@@ -146,37 +144,3 @@ def compute_indice_mapping(int[:, :] collapses, int n_points):
     indice_mapping = np.array(application)[indice_mapping]
 
     return indice_mapping
-
-def compute_new_collapses_from_edges(long [:, :] dec_edges, long [:] isolated_points):
-    ''' Compute the new collapses from the edges of the decimated mesh and the isolated
-        points
-    '''
-
-    cdef long[:, :] new_collapses = np.empty((len(isolated_points), 2), dtype=int)
-    cdef int n_ip = len(isolated_points)
-    cdef int n_edges = len(dec_edges)
-    cdef int i, j
-    cdef long[:] e = np.zeros(2, dtype=int)
-    cdef int found = 0
-
-    for i in range(n_ip):
-        new_collapses[i, 1] = isolated_points[i]
-        new_collapses[i, 0] = -1
-
-    for j in range(n_edges):
-        if found == n_ip:
-            break
-
-        e = dec_edges[j]
-        for i in range(len(isolated_points)):
-            if new_collapses[i, 0] == -1:
-
-                if e[0] == isolated_points[i]:
-                    new_collapses[i, 0] = e[1]
-                    found += 1
-
-                elif e[1] == isolated_points[i]:
-                    new_collapses[i, 0] = e[0]
-                    found += 1
-
-    return np.array(new_collapses)
