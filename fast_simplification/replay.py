@@ -182,12 +182,12 @@ def replay_simplification(points, triangles, collapses):
     # Apply the indice mapping to the triangles
     mapped_triangles = indice_mapping[triangles.copy()]
 
-    # Extract the edges and the triangles
-    # Edges can be repeated, but this is not a problem
-    # and it is faster to do so
+    # Extract the edges and the triangles
+    # Edges can be repeated, but this is not a problem
+    # and it is faster to do so
     dec_edges, dec_triangles = _replay.clean_triangles_and_edges(mapped_triangles)
 
-    # Map the isolated points to the triangles
+    # Map the isolated points to the triangles
     mapping, points_to_merge = _map_isolated_points(
         dec_points, dec_edges, dec_triangles
     )
