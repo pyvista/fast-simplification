@@ -182,48 +182,15 @@ def replay_simplification(points, triangles, collapses):
     # Apply the indice mapping to the triangles
     mapped_triangles = indice_mapping[triangles.copy()]
 
-    # Remove degenerate triangles
-    keep_triangle = (
-        (mapped_triangles[:, 0] != mapped_triangles[:, 1])
-        * (mapped_triangles[:, 1] != mapped_triangles[:, 2])
-        * (mapped_triangles[:, 0] != mapped_triangles[:, 2])
-    )
-    dec_triangles = mapped_triangles[keep_triangle]
+    # Extract the edges and the triangles
+    # Edges can be repeated, but this is not a problem
+    # and it is faster to do so
+    dec_edges, dec_triangles = _replay.clean_triangles_and_edges(mapped_triangles)
 
-    # Compute the edges of the decimated mesh
-    keep_edges0 = (mapped_triangles[:, 1] == mapped_triangles[:, 2]) * (
-        mapped_triangles[:, 0] != mapped_triangles[:, 1]
-    )
-    keep_edges1 = (mapped_triangles[:, 0] == mapped_triangles[:, 2]) * (
-        mapped_triangles[:, 1] != mapped_triangles[:, 0]
-    )
-    keep_edges2 = (mapped_triangles[:, 0] == mapped_triangles[:, 1]) * (
-        mapped_triangles[:, 2] != mapped_triangles[:, 0]
-    )
-
-    keep_edges = (keep_edges0 + keep_edges1 + keep_edges2) > 0
-
-    dec_edges = np.concatenate(
-        [
-            mapped_triangles[keep_edges0, :][:, [0, 1]],
-            mapped_triangles[keep_edges1, :][:, [1, 2]],
-            mapped_triangles[keep_edges2, :][:, [0, 2]],
-        ],
-        axis=0,
-    )
-
-    # Remove duplicate edges -> slow
-    # dec_edges.sort(axis=1)
-    # dec_edges = np.unique(dec_edges, axis=0)
-
+    # Map the isolated points to the triangles
     mapping, points_to_merge = _map_isolated_points(
         dec_points, dec_edges, dec_triangles
     )
-
-    # mapping = np.arange(dec_points.shape[0])
-    # for e in new_collapses:
-    #     e0, e1 = e
-    #     mapping[e1] = e0
 
     dec_triangles = mapping[dec_triangles]
     indice_mapping = mapping[indice_mapping]

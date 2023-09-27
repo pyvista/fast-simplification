@@ -111,6 +111,8 @@ def compute_indice_mapping(int[:, :] collapses, int n_points):
 
     ''' Compute the mapping from original indices to new indices after collapsing
         edges
+
+        (pure python implementation with numpy)
     '''
     
     # start with identity mapping
@@ -144,3 +146,74 @@ def compute_indice_mapping(int[:, :] collapses, int n_points):
     indice_mapping = np.array(application)[indice_mapping]
 
     return indice_mapping
+
+
+def clean_triangles_and_edges(long[:, :] mapped_triangles, bool clean_edges=False):
+    """Return the edges and triangles of a mesh from mapped triangles
+
+    Args:
+        mapped_triangles (np.ndarray): Mapped triangles
+        clean_edges (bool, optional): If True, remove duplicated edges.
+    
+    Returns:
+        np.ndarray: Edges
+        np.ndarray: Triangles
+    """
+
+    cdef int i, j, k, l
+    cdef int n_edges = 0
+    cdef int n_triangles = 0
+    cdef int N = len(mapped_triangles)
+    cdef long[:, :] edges_with_rep = np.zeros((N, 2), dtype=int)
+    cdef long[:, :] triangles = np.zeros((N, 3), dtype=int)
+
+    for i in range(N):
+        j = mapped_triangles[i, 0]
+        k = mapped_triangles[i, 1]
+        l = mapped_triangles[i, 2]
+        
+        if j != k and j != l and k != l:
+            triangles[n_triangles, 0] = j
+            triangles[n_triangles, 1] = k
+            triangles[n_triangles, 2] = l
+            n_triangles += 1
+
+        elif j != k:
+            # j, k = np.sort([j, k])
+            edges_with_rep[n_edges, 0] = j
+            edges_with_rep[n_edges, 1] = k
+            n_edges += 1
+        
+        elif j != l:
+            # j, l = np.sort([j, l])
+            edges_with_rep[n_edges, 0] = j
+            edges_with_rep[n_edges, 1] = l
+            n_edges += 1
+        
+        elif l != k:
+            # l, k = np.sort([j, k])
+            edges_with_rep[n_edges, 0] = l
+            edges_with_rep[n_edges, 1] = k
+            n_edges += 1
+
+    if not clean_edges:
+
+        return np.asarray(edges_with_rep)[:n_edges, :], np.asarray(triangles)[:n_triangles, :]
+
+
+    cdef long[:, :] edges = np.zeros((n_edges, 2), dtype=int)
+
+
+    # Lexicographic sort
+    cdef long[:] order = np.lexsort((np.asarray(edges_with_rep[:n_edges, 1]), np.asarray(edges_with_rep[:n_edges, 0])))
+    # Remove duplicates
+    cdef int n_keep_edges = 1
+    edges[0, :] = edges_with_rep[order[0], :]
+    print(f"n_edges : {n_edges}")
+    for i in range(1, n_edges):
+        if (edges_with_rep[order[i], 0] != edges_with_rep[order[i - 1], 0]) or (edges_with_rep[order[i], 1] != edges_with_rep[order[i - 1], 1]):
+            edges[n_keep_edges, :] = edges_with_rep[order[i], :]
+            n_keep_edges += 1
+
+
+    return np.asarray(edges)[:n_keep_edges, :], np.asarray(triangles)[:n_triangles, :]
