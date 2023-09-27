@@ -1,6 +1,8 @@
-from . import _replay
 from time import time
+
 import numpy as np
+
+from . import _replay
 
 
 def _map_isolated_points(points, edges, triangles):
@@ -152,9 +154,7 @@ def replay_simplification(points, triangles, collapses):
     if triangles.ndim != 2:
         raise ValueError("``triangles`` array must be 2 dimensional")
     if triangles.shape[1] != 3:
-        raise ValueError(
-            f"Expected ``triangles`` array to be (n, 3), not {triangles.shape}"
-        )
+        raise ValueError(f"Expected ``triangles`` array to be (n, 3), not {triangles.shape}")
 
     if not triangles.flags.c_contiguous:
         triangles = np.ascontiguousarray(triangles)
@@ -188,9 +188,7 @@ def replay_simplification(points, triangles, collapses):
     dec_edges, dec_triangles = _replay.clean_triangles_and_edges(mapped_triangles)
 
     # Map the isolated points to the triangles
-    mapping, points_to_merge = _map_isolated_points(
-        dec_points, dec_edges, dec_triangles
-    )
+    mapping, points_to_merge = _map_isolated_points(dec_points, dec_edges, dec_triangles)
 
     dec_triangles = mapping[dec_triangles]
     indice_mapping = mapping[indice_mapping]
