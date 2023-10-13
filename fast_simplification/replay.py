@@ -1,6 +1,8 @@
 import numpy as np
+
 from . import _replay
 from .utils import ascontiguous
+
 
 def _map_isolated_points(points, edges, triangles):
     """Map the isolated points to the triangles.
