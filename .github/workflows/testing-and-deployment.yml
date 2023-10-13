@@ -25,7 +25,6 @@ jobs:
         run: |
           sudo apt update
           sudo apt install libgl1-mesa-glx
-          sudo apt upgrade openssl
 
       - name: Build and validate wheel
         run: |
@@ -63,7 +62,6 @@ jobs:
         run: |
           sudo apt update
           sudo apt install libgl1-mesa-glx xvfb
-          sudo apt upgrade openssl
 
       - name: Install library
         run: pip install .
