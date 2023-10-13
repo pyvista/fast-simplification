@@ -5,16 +5,11 @@ Replay Decimation
 This example shows how to replay a decimation sequence with replay.
 
 """
-
-
 from time import time
-
 import numpy as np
 import pyvista as pv
 from pyvista import examples
-
 import fast_simplification
-
 
 # Ancillary function to convert triangles to padded faces
 def triangles_to_faces(triangles):

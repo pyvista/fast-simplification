@@ -1,10 +1,6 @@
-from time import time
-
 import numpy as np
-
 from . import _replay
 from .utils import ascontiguous
-
 
 def _map_isolated_points(points, edges, triangles):
     """Map the isolated points to the triangles.
@@ -24,7 +20,7 @@ def _map_isolated_points(points, edges, triangles):
 
     In this example, the points 5, 3, 4, 7, 8, 9 are not connected to any triangle.
     The expected mapping is:
-    
+
     0 -> 0
     1 -> 1
     2 -> 2
@@ -56,10 +52,9 @@ def _map_isolated_points(points, edges, triangles):
         np.ndarray
             merged points array
     """
-
     n_points = points.shape[0]
 
-    # The poins to connect are the points that are not in the triangles
+    # The points to connect are the points that are not in the triangles
     # but are in the edges
     points_to_connect = np.intersect1d(
         np.setdiff1d(np.arange(n_points), np.unique(triangles)), np.unique(edges)
