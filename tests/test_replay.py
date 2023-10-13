@@ -77,15 +77,19 @@ def test_collapses_sphere(mesh):
     assert np.allclose(points_out, replay_points)
     assert np.allclose(faces_out, replay_faces)
 
+
 try:
     from pyvista import examples
+
     @pytest.fixture
     def louis():
         return examples.download_louis_louvre()
+
     has_examples = True
 except:
     has_examples = False
 skip_no_examples = pytest.mark.skipif(not has_examples, reason="Requires pyvista.examples")
+
 
 @skip_no_examples
 @skip_no_vtk
