@@ -1,6 +1,7 @@
 from . import _replay
 from time import time
 import numpy as np
+from .utils import ascontiguous
 
 
 def _map_isolated_points(points, edges, triangles):
@@ -103,6 +104,7 @@ def _map_isolated_points(points, edges, triangles):
     return mapping, merged_points
 
 
+@ascontiguous
 def replay_simplification(points, triangles, collapses):
     """Replay the decimation of a triangular mesh.
 
