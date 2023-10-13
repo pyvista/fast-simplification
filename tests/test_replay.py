@@ -9,7 +9,6 @@ try:
     has_vtk = True
 except ModuleNotFoundError:
     has_vtk = False
-
 skip_no_vtk = pytest.mark.skipif(not has_vtk, reason="Requires VTK")
 
 
@@ -50,9 +49,6 @@ def test_collapses_trivial():
     points_out, faces_out, collapses = fast_simplification.simplify(
         points, faces, 0.5, return_collapses=True
     )
-    n_points_before_simplification = len(points)
-    n_points_after_simplification = len(points_out)
-    n_collapses = len(collapses)
 
     (
         replay_points,
@@ -72,9 +68,6 @@ def test_collapses_sphere(mesh):
     points_out, faces_out, collapses = fast_simplification.simplify(
         points, faces, reduction, return_collapses=True
     )
-    n_points_before_simplification = len(points)
-    n_points_after_simplification = len(points_out)
-    n_collapses = len(collapses)
 
     (
         replay_points,
@@ -84,23 +77,28 @@ def test_collapses_sphere(mesh):
     assert np.allclose(points_out, replay_points)
     assert np.allclose(faces_out, replay_faces)
 
+try:
+    from pyvista import examples
+    @pytest.fixture
+    def louis():
+        return examples.download_louis_louvre()
+    has_examples = True
+except:
+    has_examples = False
+skip_no_examples = pytest.mark.skipif(not has_examples, reason="Requires pyvista.examples")
 
+@skip_no_examples
 @skip_no_vtk
-def test_collapses_louis():
+def test_collapses_louis(louis):
     from pyvista import examples
 
-    mesh = examples.download_louis_louvre()
-
-    points = mesh.points
-    faces = mesh.faces.reshape(-1, 4)[:, 1:]
+    points = louis.points
+    faces = louis.faces.reshape(-1, 4)[:, 1:]
     reduction = 0.9
 
     points_out, faces_out, collapses = fast_simplification.simplify(
         points, faces, reduction, return_collapses=True
     )
-    n_points_before_simplification = len(points)
-    n_points_after_simplification = len(points_out)
-    n_collapses = len(collapses)
 
     (
         replay_points,
