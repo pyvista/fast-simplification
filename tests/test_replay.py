@@ -94,7 +94,6 @@ skip_no_examples = pytest.mark.skipif(not has_examples, reason="Requires pyvista
 @skip_no_examples
 @skip_no_vtk
 def test_collapses_louis(louis):
-
     points = louis.points
     faces = louis.faces.reshape(-1, 4)[:, 1:]
     reduction = 0.9
