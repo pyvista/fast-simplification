@@ -1,9 +1,9 @@
 from time import time
 
 import numpy as np
-from .utils import ascontiguous
 
 from . import _replay
+from .utils import ascontiguous
 
 
 def _map_isolated_points(points, edges, triangles):
