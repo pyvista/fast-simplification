@@ -1,8 +1,5 @@
 import numpy as np
-
-import fast_simplification
 from fast_simplification import _map_isolated_points as map_isolated_points
-
 
 def test_map_isolated_points():
     # Example 1
