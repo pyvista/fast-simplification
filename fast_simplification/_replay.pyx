@@ -107,13 +107,13 @@ def load_from_vtk(int n_points, float [:, ::1] points, int [::1] faces, int n_fa
     load_points(n_points, &points[0, 0])
 
 
-
 def compute_indice_mapping(int[:, :] collapses, int n_points):
 
     ''' Compute the mapping from original indices to new indices after collapsing
         edges
+
+        (pure python implementation with numpy)
     '''
-    
     
     # start with identity mapping
     indice_mapping = np.arange(n_points, dtype=int)
@@ -147,36 +147,73 @@ def compute_indice_mapping(int[:, :] collapses, int n_points):
 
     return indice_mapping
 
-def compute_new_collapses_from_edges(long [:, :] dec_edges, long [:] isolated_points):
-    ''' Compute the new collapses from the edges of the decimated mesh and the isolated
-        points
-    '''
 
-    cdef long[:, :] new_collapses = np.empty((len(isolated_points), 2), dtype=int)
-    cdef int n_ip = len(isolated_points)
-    cdef int n_edges = len(dec_edges)
-    cdef int i, j
-    cdef long[:] e = np.zeros(2, dtype=int)
-    cdef int found = 0
+def clean_triangles_and_edges(long[:, :] mapped_triangles, bool clean_edges=False):
+    """Return the edges and triangles of a mesh from mapped triangles
 
-    for i in range(n_ip):
-        new_collapses[i, 1] = isolated_points[i]
-        new_collapses[i, 0] = -1
+    Args:
+        mapped_triangles (np.ndarray): Mapped triangles
+        clean_edges (bool, optional): If True, remove duplicated edges.
+    
+    Returns:
+        np.ndarray: Edges
+        np.ndarray: Triangles
+    """
 
-    for j in range(n_edges):
-        if found == n_ip:
-            break
+    cdef int i, j, k, l
+    cdef int n_edges = 0
+    cdef int n_triangles = 0
+    cdef int N = len(mapped_triangles)
+    cdef long[:, :] edges_with_rep = np.zeros((N, 2), dtype=int)
+    cdef long[:, :] triangles = np.zeros((N, 3), dtype=int)
 
-        e = dec_edges[j]
-        for i in range(len(isolated_points)):
-            if new_collapses[i, 0] == -1:
+    for i in range(N):
+        j = mapped_triangles[i, 0]
+        k = mapped_triangles[i, 1]
+        l = mapped_triangles[i, 2]
+        
+        if j != k and j != l and k != l:
+            triangles[n_triangles, 0] = j
+            triangles[n_triangles, 1] = k
+            triangles[n_triangles, 2] = l
+            n_triangles += 1
 
-                if e[0] == isolated_points[i]:
-                    new_collapses[i, 0] = e[1]
-                    found += 1
+        elif j != k:
+            # j, k = np.sort([j, k])
+            edges_with_rep[n_edges, 0] = j
+            edges_with_rep[n_edges, 1] = k
+            n_edges += 1
+        
+        elif j != l:
+            # j, l = np.sort([j, l])
+            edges_with_rep[n_edges, 0] = j
+            edges_with_rep[n_edges, 1] = l
+            n_edges += 1
+        
+        elif l != k:
+            # l, k = np.sort([j, k])
+            edges_with_rep[n_edges, 0] = l
+            edges_with_rep[n_edges, 1] = k
+            n_edges += 1
 
-                elif e[1] == isolated_points[i]:
-                    new_collapses[i, 0] = e[0]
-                    found += 1
+    if not clean_edges:
 
-    return np.array(new_collapses)
+        return np.asarray(edges_with_rep)[:n_edges, :], np.asarray(triangles)[:n_triangles, :]
+
+
+    cdef long[:, :] edges = np.zeros((n_edges, 2), dtype=int)
+
+
+    # Lexicographic sort
+    cdef long[:] order = np.lexsort((np.asarray(edges_with_rep[:n_edges, 1]), np.asarray(edges_with_rep[:n_edges, 0])))
+    # Remove duplicates
+    cdef int n_keep_edges = 1
+    edges[0, :] = edges_with_rep[order[0], :]
+    print(f"n_edges : {n_edges}")
+    for i in range(1, n_edges):
+        if (edges_with_rep[order[i], 0] != edges_with_rep[order[i - 1], 0]) or (edges_with_rep[order[i], 1] != edges_with_rep[order[i - 1], 1]):
+            edges[n_keep_edges, :] = edges_with_rep[order[i], :]
+            n_keep_edges += 1
+
+
+    return np.asarray(edges)[:n_keep_edges, :], np.asarray(triangles)[:n_triangles, :]

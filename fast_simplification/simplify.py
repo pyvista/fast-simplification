@@ -1,5 +1,6 @@
 """Simplification library."""
 from . import _simplify
+from .utils import ascontiguous
 
 
 def _check_args(target_reduction, target_count, n_faces):
@@ -23,6 +24,7 @@ def _check_args(target_reduction, target_count, n_faces):
     return int(target_count)
 
 
+@ascontiguous
 def simplify(
     points,
     triangles,
@@ -64,7 +66,7 @@ def simplify(
     return_collapses : bool, optional
         If True, return the history of collapses as a
         ``(n_collapses, 2)`` array of indices.
-        ``collaspes[i] = [i0, i1]`` means that durint the i-th
+        ``collapses[i] = [i0, i1]`` means that durint the i-th
         collapse, the vertex ``i1`` was collapsed into the vertex
         ``i0``.
 
@@ -187,7 +189,7 @@ def simplify_mesh(mesh, target_reduction=None, target_count=None, agg=7, verbose
         Simplified mesh. The field data of the mesh will contain a
         field named ``fast_simplification_collapses`` that contains
         the history of collapses as a ``(n_collapses, 2)`` array of
-        indices. ``collaspes[i] = [i0, i1]`` means that during the
+        indices. ``collapses[i] = [i0, i1]`` means that during the
         i-th collapse, the vertex ``i1`` was collapsed into the vertex
         ``i0``.
 
