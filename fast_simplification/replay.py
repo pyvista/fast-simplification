@@ -1,6 +1,109 @@
+import numpy as np
+
 from . import _replay
+from .utils import ascontiguous
 
 
+def _map_isolated_points(points, edges, triangles):
+    """Map the isolated points to the triangles.
+
+    (points, edges, triangles) represents a structure. The goal of this function
+    is to compute a mapping array such that the points that are not in the triangles
+    but are in the edges are merged into the points that are in the triangles, with
+    respect to the edges. An example is given below.
+
+          (1)
+         / | \\
+      (0)  |  (2)-3
+         \ | /  \\
+          (4)    6-9
+           |
+           5     8-7
+
+    In this example, the points 5, 3, 4, 7, 8, 9 are not connected to any triangle.
+    The expected mapping is:
+
+    0 -> 0
+    1 -> 1
+    2 -> 2
+    3 -> 2
+    4 -> 4
+    5 -> 4
+    6 -> 2
+    7 -> 7 (7 cannot be merged into any point in the triangles)
+    8 -> 8 (8 cannot be merged into any point in the triangles)
+    9 -> 2
+
+    The output will be the mapping array and the merged points array. In this example,
+    the mapping array is [0, 1, 2, 2, 4, 4, 2, 7, 8, 2] and the merged points array is
+    [3, 5, 6, 9].
+
+    Parameters
+    ----------
+        points : sequence
+            array of points
+        edges : sequence
+            array of edges
+        triangles : sequence
+            array of triangles
+
+    Returns
+    -------
+        np.ndarray
+            mapping array
+        np.ndarray
+            merged points array
+    """
+    n_points = points.shape[0]
+
+    # The points to connect are the points that are not in the triangles
+    # but are in the edges
+    points_to_connect = np.intersect1d(
+        np.setdiff1d(np.arange(n_points), np.unique(triangles)), np.unique(edges)
+    )
+    # Start with the identity mapping
+    mapping = np.arange(n_points, dtype=np.int64)
+
+    # Remove edges that do not contains points to connect
+    edges = edges[np.isin(edges, points_to_connect).any(axis=1)]
+
+    n_edges = edges.shape[0]
+    n_edges_old = 0
+
+    # Iterate until there is no more edges to collapse
+    # or until a statiionary state is reached
+    while n_edges > 0 and n_edges != n_edges_old:
+        n_edges_old = n_edges
+
+        # Edges that connect two points to connect
+        # are kept for the next iteration
+        keep = np.isin(edges, points_to_connect).all(axis=1)
+
+        # Edges that connect a point to connect to a point
+        # that is not to connect are merged
+        connexions = edges[~keep]
+
+        a = np.isin(connexions, points_to_connect)
+        merged = connexions[np.where(a == True)]
+        target = connexions[np.where(a == False)]
+
+        # Update the mapping array and the points to connect
+        mapping[merged] = mapping[target]
+        points_to_connect = np.setdiff1d(points_to_connect, merged)
+
+        # Remove the edges that are merged
+        edges = edges[keep]
+        # Remove edges that do not contains points to connect
+        edges = edges[np.isin(edges, points_to_connect).any(axis=1)]
+        n_edges = edges.shape[0]
+
+    # The points that have been merged are the ones
+    # suche that mapping[i] != i
+    merged_points = np.where(mapping != np.arange(len(mapping)))[0]
+    return mapping, merged_points
+
+
+@ascontiguous
 def replay_simplification(points, triangles, collapses):
     """Replay the decimation of a triangular mesh.
 
@@ -78,57 +181,22 @@ def replay_simplification(points, triangles, collapses):
     # Apply the indice mapping to the triangles
     mapped_triangles = indice_mapping[triangles.copy()]
 
-    # Remove degenerate triangles
-    keep_triangle = (
-        (mapped_triangles[:, 0] != mapped_triangles[:, 1])
-        * (mapped_triangles[:, 1] != mapped_triangles[:, 2])
-        * (mapped_triangles[:, 0] != mapped_triangles[:, 2])
-    )
-    dec_triangles = mapped_triangles[keep_triangle]
+    # Extract the edges and the triangles
+    # Edges can be repeated, but this is not a problem
+    # and it is faster to do so
+    dec_edges, dec_triangles = _replay.clean_triangles_and_edges(mapped_triangles)
 
-    # Compute the edges of the decimated mesh
-    keep_edges0 = (mapped_triangles[:, 1] == mapped_triangles[:, 2]) * (
-        mapped_triangles[:, 0] != mapped_triangles[:, 1]
-    )
-    keep_edges1 = (mapped_triangles[:, 0] == mapped_triangles[:, 2]) * (
-        mapped_triangles[:, 1] != mapped_triangles[:, 0]
-    )
-    keep_edges2 = (mapped_triangles[:, 0] == mapped_triangles[:, 1]) * (
-        mapped_triangles[:, 2] != mapped_triangles[:, 0]
-    )
-    dec_edges = np.concatenate(
-        [
-            mapped_triangles[keep_edges0, :][:, [0, 1]],
-            mapped_triangles[keep_edges1, :][:, [1, 2]],
-            mapped_triangles[keep_edges2, :][:, [0, 2]],
-        ],
-        axis=0,
-    )
-
-    # identify isolated points among the decimated points
-    # there are the points that are in the image of
-    # the indice mapping but not connected to any of
-    # the decimated triangles
-    isolated_points = np.setdiff1d(np.unique(indice_mapping), np.unique(dec_triangles))
-
-    # Compute the new collapses : the isolated points
-    # are collapsed to one of the points with which
-    # they share an edge
-    new_collapses = _replay.compute_new_collapses_from_edges(dec_edges, isolated_points)
-
-    # Apply the new collapses)
-    mapping = np.arange(dec_points.shape[0])
-    for e in new_collapses:
-        e0, e1 = e
-        mapping[e1] = e0
+    # Map the isolated points to the triangles
+    mapping, points_to_merge = _map_isolated_points(dec_points, dec_edges, dec_triangles)
 
     dec_triangles = mapping[dec_triangles]
     indice_mapping = mapping[indice_mapping]
 
     # Remove the isolated points
-    isolated_points = np.sort(isolated_points)[::-1]
+    # isolated_points = new_collapses[:, 1]
+    points_to_merge = np.sort(points_to_merge)[::-1]
     mapping = np.arange(dec_points.shape[0])
-    for ip in isolated_points:
+    for ip in points_to_merge:
         dec_points = np.delete(dec_points, ip, axis=0)
         mapping[ip:] -= 1
     indice_mapping = mapping[indice_mapping]

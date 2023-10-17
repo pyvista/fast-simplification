@@ -1,5 +1,6 @@
 """Simplification library."""
 from . import _simplify
+from .utils import ascontiguous
 
 
 def _check_args(target_reduction, target_count, n_faces):
@@ -23,6 +24,7 @@ def _check_args(target_reduction, target_count, n_faces):
     return int(target_count)
 
 
+@ascontiguous
 def simplify(
     points,
     triangles,
