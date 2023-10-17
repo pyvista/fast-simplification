@@ -120,7 +120,7 @@ def replay_simplification(points, triangles, collapses):
     collapses : sequence
         The collapses to replay.
         A ``(n, 2)`` numpy.ndarray of collapses.
-        ``collaspes[i] = [i0, i1]`` means that durint the i-th
+        ``collapses[i] = [i0, i1]`` means that during the i-th
         collapse, the vertex ``i1`` was collapsed into the vertex
         ``i0``.
 
