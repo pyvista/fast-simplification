@@ -94,6 +94,76 @@ namespace Replay{
             loopj(0,3) vertices[t.v[j]].q =
                 vertices[t.v[j]].q+SymetricMatrix(n.x,n.y,n.z,-n.dot(p[0]));
         }
+
+		// Init Reference ID list
+		loopi(0,vertices.size())
+		{
+			vertices[i].tstart=0;
+			vertices[i].tcount=0;
+		}
+		loopi(0,triangles.size())
+		{
+			Triangle &t=triangles[i];
+			loopj(0,3) vertices[t.v[j]].tcount++;
+		}
+		int tstart=0;
+		loopi(0,vertices.size())
+		{
+			Vertex &v=vertices[i];
+			v.tstart=tstart;
+			tstart+=v.tcount;
+			v.tcount=0;
+		}
+
+		// Write References
+		refs.resize(triangles.size()*3);
+		loopi(0,triangles.size())
+		{
+			Triangle &t=triangles[i];
+			loopj(0,3)
+			{
+				Vertex &v=vertices[t.v[j]];
+				refs[v.tstart+v.tcount].tid=i;
+				refs[v.tstart+v.tcount].tvertex=j;
+				v.tcount++;
+			}
+		}
+
+		// Initialize vertices.borders
+		std::vector<int> vcount,vids;
+
+		loopi(0,vertices.size())
+				vertices[i].border=0;
+
+			loopi(0,vertices.size())
+			{
+				Vertex &v=vertices[i];
+				vcount.clear();
+				vids.clear();
+				loopj(0,v.tcount)
+				{
+					int k=refs[v.tstart+j].tid;
+					Triangle &t=triangles[k];
+					loopk(0,3)
+					{
+						int ofs=0,id=t.v[k];
+						while(ofs<vcount.size())
+						{
+							if(vids[ofs]==id)break;
+							ofs++;
+						}
+						if(ofs==vcount.size())
+						{
+							vcount.push_back(1);
+							vids.push_back(id);
+						}
+						else
+							vcount[ofs]++;
+					}
+				}
+				loopj(0,vcount.size()) if(vcount[j]==1)
+					vertices[vids[j]].border=1;
+			}
 	}
 
 
