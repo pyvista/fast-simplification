@@ -10,9 +10,6 @@ requires = [
 [tool.pytest.ini_options]
 junit_family= "legacy"
 filterwarnings = [
-    "ignore::FutureWarning",
-    "ignore::PendingDeprecationWarning",
-    "ignore::DeprecationWarning",
     # bogus numpy ABI warning (see numpy/#432)
     "ignore:.*numpy.dtype size changed.*:RuntimeWarning",
     "ignore:.*numpy.ufunc size changed.*:RuntimeWarning",
@@ -21,7 +18,7 @@ filterwarnings = [
 
 [tool.cibuildwheel]
 archs = ["auto64"]  # 64-bit only
-skip = "cp36-* pp* *musllinux*"  # disable PyPy and musl-based wheels
+skip = "cp36-* cp37-* pp* *musllinux*"  # disable PyPy and musl-based wheels
 test-requires = "pyvista pytest"
 test-command = "pytest {project}/tests"
 
