@@ -5,7 +5,7 @@ from .utils import ascontiguous
 
 
 def _map_isolated_points(points, edges, triangles):
-    """Map the isolated points to the triangles.
+    r"""Map the isolated points to the triangles.
 
     (points, edges, triangles) represents a structure. The goal of this function
     is to compute a mapping array such that the points that are not in the triangles
