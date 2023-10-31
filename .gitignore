@@ -11,6 +11,7 @@ __pycache__/
 
 # Cython generated files #
 fast_simplification/_simplify.cpp
+fast_simplification/_replay.cpp
 
 # documentation
 doc/_build/
