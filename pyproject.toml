@@ -21,7 +21,7 @@ filterwarnings = [
 
 [tool.cibuildwheel]
 archs = ["auto64"]  # 64-bit only
-skip = "cp36-* pp* *musllinux*"  # disable PyPy and musl-based wheels
+skip = "cp36-* cp37-* pp* *musllinux*"  # disable PyPy and musl-based wheels
 test-requires = "pyvista pytest"
 test-command = "pytest {project}/tests"
 
