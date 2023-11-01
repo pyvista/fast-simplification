@@ -85,6 +85,10 @@ try:
     def louis():
         return examples.download_louis_louvre()
 
+    @pytest.fixture
+    def human():
+        return examples.download_human()
+
     has_examples = True
 except:
     has_examples = False
@@ -96,6 +100,26 @@ skip_no_examples = pytest.mark.skipif(not has_examples, reason="Requires pyvista
 def test_collapses_louis(louis):
     points = louis.points
     faces = louis.faces.reshape(-1, 4)[:, 1:]
+    reduction = 0.9
+
+    points_out, faces_out, collapses = fast_simplification.simplify(
+        points, faces, reduction, return_collapses=True
+    )
+
+    (
+        replay_points,
+        replay_faces,
+        indice_mapping,
+    ) = fast_simplification.replay_simplification(points, faces, collapses)
+    assert np.allclose(points_out, replay_points)
+    assert np.allclose(faces_out, replay_faces)
+
+
+@skip_no_examples
+@skip_no_vtk
+def test_human(human):
+    points = human.points
+    faces = human.faces.reshape(-1, 4)[:, 1:]
     reduction = 0.9
 
     points_out, faces_out, collapses = fast_simplification.simplify(
