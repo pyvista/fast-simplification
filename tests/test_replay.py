@@ -92,9 +92,7 @@ try:
     has_examples = True
 except:
     has_examples = False
-skip_no_examples = pytest.mark.skipif(
-    not has_examples, reason="Requires pyvista.examples"
-)
+skip_no_examples = pytest.mark.skipif(not has_examples, reason="Requires pyvista.examples")
 
 
 @skip_no_examples

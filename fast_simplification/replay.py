@@ -163,9 +163,7 @@ def replay_simplification(points, triangles, collapses):
     if triangles.ndim != 2:
         raise ValueError("``triangles`` array must be 2 dimensional")
     if triangles.shape[1] != 3:
-        raise ValueError(
-            f"Expected ``triangles`` array to be (n, 3), not {triangles.shape}"
-        )
+        raise ValueError(f"Expected ``triangles`` array to be (n, 3), not {triangles.shape}")
 
     if not triangles.flags.c_contiguous:
         triangles = np.ascontiguousarray(triangles)

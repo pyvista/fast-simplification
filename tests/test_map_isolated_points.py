@@ -94,9 +94,7 @@ def test_map_isolated_points():
 
     points = np.random.rand(7, 3)
 
-    edges = np.array(
-        [[0, 1], [1, 2], [2, 0], [0, 4], [4, 6], [5, 6], [3, 5]], dtype=np.int64
-    )
+    edges = np.array([[0, 1], [1, 2], [2, 0], [0, 4], [4, 6], [5, 6], [3, 5]], dtype=np.int64)
 
     triangles = np.array(
         [
@@ -144,9 +142,7 @@ def test_map_isolated_points():
     target_merged_points = np.array([1, 2, 3], dtype=np.int64)
 
     mapping, merged_points = map_isolated_points(points, edges, triangles)
-    assert np.allclose(mapping, target_mapping1) or np.allclose(
-        mapping, target_mapping2
-    )
+    assert np.allclose(mapping, target_mapping1) or np.allclose(mapping, target_mapping2)
     assert np.allclose(merged_points, target_merged_points)
 
     ## Example 5
