@@ -4,7 +4,7 @@ from . import _replay
 from .utils import ascontiguous
 
 
-def _map_isolated_points(points, edges, triangles):
+def _map_isolated_points(points, edges, triangles, return_outliers=False):
     r"""Map the isolated points to the triangles.
 
     (points, edges, triangles) represents a structure. The goal of this function
@@ -36,7 +36,10 @@ def _map_isolated_points(points, edges, triangles):
 
     The output will be the mapping array and the merged points array. In this example,
     the mapping array is [0, 1, 2, 2, 4, 4, 2, 7, 8, 2] and the merged points array is
-    [3, 5, 6, 9].
+    [3, 5, 6, 9]. The points 7 and 8 are outliers. If return_outliers is True,
+    the function will return the mapping array, the merged points array and the
+    isolated points array. Else, the function will return the mapping array and the
+    merged points array.
 
     Parameters
     ----------
@@ -46,6 +49,8 @@ def _map_isolated_points(points, edges, triangles):
             array of edges
         triangles : sequence
             array of triangles
+        return_outsider : bool
+            if True, return the outliers
 
     Returns
     -------
@@ -98,9 +103,14 @@ def _map_isolated_points(points, edges, triangles):
         n_edges = edges.shape[0]
 
     # The points that have been merged are the ones
-    # suche that mapping[i] != i
+    # such that mapping[i] != i
     merged_points = np.where(mapping != np.arange(len(mapping)))[0]
-    return mapping, merged_points
+
+    if return_outliers:
+        isolated_points = points_to_connect
+        return mapping, merged_points, isolated_points
+    else:
+        return mapping, merged_points
 
 
 @ascontiguous
@@ -153,7 +163,9 @@ def replay_simplification(points, triangles, collapses):
     if triangles.ndim != 2:
         raise ValueError("``triangles`` array must be 2 dimensional")
     if triangles.shape[1] != 3:
-        raise ValueError(f"Expected ``triangles`` array to be (n, 3), not {triangles.shape}")
+        raise ValueError(
+            f"Expected ``triangles`` array to be (n, 3), not {triangles.shape}"
+        )
 
     if not triangles.flags.c_contiguous:
         triangles = np.ascontiguousarray(triangles)
@@ -187,11 +199,14 @@ def replay_simplification(points, triangles, collapses):
     dec_edges, dec_triangles = _replay.clean_triangles_and_edges(mapped_triangles)
 
     # Map the isolated points to the triangles
-    mapping, points_to_merge = _map_isolated_points(dec_points, dec_edges, dec_triangles)
+    mapping, points_to_merge, outliers = _map_isolated_points(
+        dec_points, dec_edges, dec_triangles, return_outliers=True
+    )
 
     dec_triangles = mapping[dec_triangles]
     indice_mapping = mapping[indice_mapping]
 
+    points_to_merge = np.union1d(points_to_merge, outliers)
     # Remove the isolated points
     # isolated_points = new_collapses[:, 1]
     points_to_merge = np.sort(points_to_merge)[::-1]
