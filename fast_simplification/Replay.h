@@ -56,7 +56,7 @@ namespace Replay{
             v0.q=v1.q+v0.q; // add the quadrics (for calculating the error)
 
             v1.tcount=0; // mark vertex as deleted (will be removed later)
-    
+
         }
 
         // remove deleted vertices

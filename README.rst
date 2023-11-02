@@ -38,7 +38,7 @@ with arrays of points and triangles:
              [8, 7, 5]]
 
     points_out, faces_out = fast_simplification.simplify(points, faces, 0.5)
-   
+
 
 Advanced Usage
 --------------
