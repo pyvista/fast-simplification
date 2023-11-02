@@ -4,9 +4,14 @@ on:
   pull_request:
   push:
     tags:
-      - "*"
+      - "v*"
     branches:
       - main
+
+# disable concurrent runs
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   # fail fast and early to avoid clogging GH Actions
