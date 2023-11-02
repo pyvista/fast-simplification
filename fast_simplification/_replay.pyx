@@ -114,7 +114,7 @@ def compute_indice_mapping(int[:, :] collapses, int n_points):
 
         (pure python implementation with numpy)
     '''
-    
+
     # start with identity mapping
     indice_mapping = np.arange(n_points, dtype=int)
 
@@ -154,7 +154,7 @@ def clean_triangles_and_edges(long[:, :] mapped_triangles, bool clean_edges=Fals
     Args:
         mapped_triangles (np.ndarray): Mapped triangles
         clean_edges (bool, optional): If True, remove duplicated edges.
-    
+
     Returns:
         np.ndarray: Edges
         np.ndarray: Triangles
@@ -171,7 +171,7 @@ def clean_triangles_and_edges(long[:, :] mapped_triangles, bool clean_edges=Fals
         j = mapped_triangles[i, 0]
         k = mapped_triangles[i, 1]
         l = mapped_triangles[i, 2]
-        
+
         if j != k and j != l and k != l:
             triangles[n_triangles, 0] = j
             triangles[n_triangles, 1] = k
@@ -183,13 +183,13 @@ def clean_triangles_and_edges(long[:, :] mapped_triangles, bool clean_edges=Fals
             edges_with_rep[n_edges, 0] = j
             edges_with_rep[n_edges, 1] = k
             n_edges += 1
-        
+
         elif j != l:
             # j, l = np.sort([j, l])
             edges_with_rep[n_edges, 0] = j
             edges_with_rep[n_edges, 1] = l
             n_edges += 1
-        
+
         elif l != k:
             # l, k = np.sort([j, k])
             edges_with_rep[n_edges, 0] = l

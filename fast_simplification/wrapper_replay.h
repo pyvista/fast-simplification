@@ -1,7 +1,7 @@
 // wrap simplify header file for integration with cython
 #include "Replay.h"
 
-namespace Replay{   
+namespace Replay{
 
   // load collapses
   void load_collapses(const int n_coll, int* coll){

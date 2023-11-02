@@ -364,7 +364,7 @@ namespace Simplify
 		collapses.clear();
 		for (int iteration = 0; iteration < 100; iteration ++)
 		{
-			
+
 			if(triangle_count-deleted_triangles<=target_count)break;
 
 			// update mesh once in a while
@@ -440,7 +440,7 @@ namespace Simplify
 					{
 						// save ram
 						if(tcount)memcpy(&refs[v0.tstart],&refs[tstart],tcount*sizeof(Ref));
-						
+
 					}
 					else
 						// append
@@ -455,7 +455,7 @@ namespace Simplify
 		}
 		// clean up mesh
 		compact_mesh();
-		
+
 	} //simplify_mesh()
 
 	void simplify_mesh_lossless(bool verbose=false)
