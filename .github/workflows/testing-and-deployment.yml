@@ -4,9 +4,14 @@ on:
   pull_request:
   push:
     tags:
-      - "*"
+      - "v*"
     branches:
       - main
+
+# disable concurrent runs
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   # fail fast and early to avoid clogging GH Actions
@@ -100,32 +105,33 @@ jobs:
       - uses: actions/upload-artifact@v3
         with:
           path: ./wheelhouse/*.whl
+          name: fast-simplification-wheel
 
   release:
+    name: Release
     if: github.event_name == 'push' && contains(github.ref, 'refs/tags')
     needs: [build_wheels, docs_build]
-    name: Release
     runs-on: ubuntu-latest
-
+    environment:
+      name: pypi
+      url: https://pypi.org/p/fast-simplification
+    permissions:
+      id-token: write  # this permission is mandatory for trusted publishing
     steps:
-      - uses: actions/checkout@v3
-
-      - name: Set up Python
-        uses: actions/setup-python@v4
+      - uses: actions/download-artifact@v3
         with:
-          python-version: "3.11"
-
-      # download all artifacts
-      - uses: actions/download-artifact@v2
-
+          path: dist/
+      - name: Flatten directory structure
+        run: |
+          mv fast-simplification-wheel/*/* dist/
       - name: Display structure of downloaded files
         run: ls -R
+      - name: Publish package distributions to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          generate_release_notes: true
+          files: |
+            ./**/*.whl
 
-      - name: Upload package to PyPi
-        run: |
-          pip install twine
-          twine upload --skip-existing ./**/*.whl
-          twine upload --skip-existing ./**/*.tar.gz
-        env:
-          TWINE_USERNAME: __token__
-          TWINE_PASSWORD: ${{ secrets.PYPI_TOKEN }}

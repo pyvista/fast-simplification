@@ -4,7 +4,7 @@ from . import _replay
 from .utils import ascontiguous
 
 
-def _map_isolated_points(points, edges, triangles):
+def _map_isolated_points(points, edges, triangles, return_outliers=False):
     r"""Map the isolated points to the triangles.
 
     (points, edges, triangles) represents a structure. The goal of this function
@@ -36,7 +36,10 @@ def _map_isolated_points(points, edges, triangles):
 
     The output will be the mapping array and the merged points array. In this example,
     the mapping array is [0, 1, 2, 2, 4, 4, 2, 7, 8, 2] and the merged points array is
-    [3, 5, 6, 9].
+    [3, 5, 6, 9]. The points 7 and 8 are outliers. If return_outliers is True,
+    the function will return the mapping array, the merged points array and the
+    isolated points array. Else, the function will return the mapping array and the
+    merged points array.
 
     Parameters
     ----------
@@ -46,6 +49,8 @@ def _map_isolated_points(points, edges, triangles):
             array of edges
         triangles : sequence
             array of triangles
+        return_outsider : bool
+            if True, return the outliers
 
     Returns
     -------
@@ -84,8 +89,8 @@ def _map_isolated_points(points, edges, triangles):
         connexions = edges[~keep]
 
         a = np.isin(connexions, points_to_connect)
-        merged = connexions[np.where(a == True)]
-        target = connexions[np.where(a == False)]
+        merged = connexions[np.where(a)]
+        target = connexions[np.where(~a)]
 
         # Update the mapping array and the points to connect
         mapping[merged] = mapping[target]
@@ -98,8 +103,12 @@ def _map_isolated_points(points, edges, triangles):
         n_edges = edges.shape[0]
 
     # The points that have been merged are the ones
-    # suche that mapping[i] != i
+    # such that mapping[i] != i
     merged_points = np.where(mapping != np.arange(len(mapping)))[0]
+
+    if return_outliers:
+        isolated_points = points_to_connect
+        return mapping, merged_points, isolated_points
     return mapping, merged_points
 
 
@@ -166,11 +175,10 @@ def replay_simplification(points, triangles, collapses):
         load = _replay.load_int32
         triangles = triangles.astype(np.int32)
 
+    # Collapse the points
     n_faces = triangles.shape[0]
     n_points = points.shape[0]
-
-    # Collapse the points
-    load(points.shape[0], n_faces, collapses.shape[0], points, triangles, collapses)
+    load(n_points, n_faces, collapses.shape[0], points, triangles, collapses)
     _replay.replay()
     dec_points = _replay.return_points()
 
@@ -187,11 +195,14 @@ def replay_simplification(points, triangles, collapses):
     dec_edges, dec_triangles = _replay.clean_triangles_and_edges(mapped_triangles)
 
     # Map the isolated points to the triangles
-    mapping, points_to_merge = _map_isolated_points(dec_points, dec_edges, dec_triangles)
+    mapping, points_to_merge, outliers = _map_isolated_points(
+        dec_points, dec_edges, dec_triangles, return_outliers=True
+    )
 
     dec_triangles = mapping[dec_triangles]
     indice_mapping = mapping[indice_mapping]
 
+    points_to_merge = np.union1d(points_to_merge, outliers)
     # Remove the isolated points
     # isolated_points = new_collapses[:, 1]
     points_to_merge = np.sort(points_to_merge)[::-1]
