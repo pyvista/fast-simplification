@@ -6,10 +6,10 @@
 
 Computation times
 =================
-**00:17.885** total execution time for **examples** files:
+**00:22.750** total execution time for **examples** files:
 
 +--------------------------------------------------------+-----------+--------+
-| :ref:`sphx_glr_examples_simplify.py` (``simplify.py``) | 00:09.829 | 0.0 MB |
+| :ref:`sphx_glr_examples_simplify.py` (``simplify.py``) | 00:13.487 | 0.0 MB |
 +--------------------------------------------------------+-----------+--------+
-| :ref:`sphx_glr_examples_replay.py` (``replay.py``)     | 00:08.057 | 0.0 MB |
+| :ref:`sphx_glr_examples_replay.py` (``replay.py``)     | 00:09.263 | 0.0 MB |
 +--------------------------------------------------------+-----------+--------+
