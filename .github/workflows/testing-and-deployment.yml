@@ -121,10 +121,13 @@ jobs:
       - uses: actions/download-artifact@v3
         with:
           path: dist/
+      - name: Display structure of downloaded files
+        run: ls -R
       - name: Flatten directory structure
         run: |
-          mv fast-simplification-wheel/*/* dist/
-      - name: Display structure of downloaded files
+          mv dist/fast-simplification-wheel/*/* dist/
+          rm -rf dist/fast-simplification-wheel/
+      - name: Display structure of downloaded files after flattening
         run: ls -R
       - name: Publish package distributions to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
