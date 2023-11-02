@@ -20,7 +20,7 @@ def _check_args(target_reduction, target_count, n_faces):
     if target_count < 0:
         raise ValueError("``target_count`` must be greater than 0")
     if target_count > n_faces:
-        raise ValueError(f"``target_count`` must be less than the number of faces {mesh.n_faces}")
+        raise ValueError(f"``target_count`` must be less than the number of faces {n_faces}")
     return int(target_count)
 
 

@@ -3,6 +3,7 @@ import os
 
 import numpy as np
 import pyvista
+from sphinx_gallery.sorting import FileNameSortKey
 
 from fast_simplification import __version__
 
@@ -190,8 +191,6 @@ todo_include_todos = True
 
 
 # -- Sphinx Gallery Options
-from sphinx_gallery.sorting import FileNameSortKey
-
 sphinx_gallery_conf = {
     # path to your examples scripts
     "examples_dirs": [

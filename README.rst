@@ -204,3 +204,29 @@ will share the same topology.
    >>> for mesh in meshes:
    ...     points_out, faces_out, _ = fast_simplification.replay_simplification(mesh.points, mesh.faces, collapses)
    ...     decimated_meshes.append(pyvista.PolyData(points_out, faces_out))
+
+
+Contributing
+------------
+Contribute to this repository by forking this repository and installing in
+development mode with::
+
+  git clone https://github.com/<USERNAME>/fast-simplification
+  pip install -e .
+  pip install -r requirements_test.txt
+
+You can then add your feature or commit your bug fix and then run your unit
+testing with::
+
+  pytest
+
+Unit testing will automatically enforce minimum code coverage standards.
+
+Next, to ensure your code meets minimum code styling standards, run::
+
+  pip install pre-commit
+  pre-commit run --all-files
+
+Finally, `create a pull request`_ from your fork and I'll be sure to review it.
+
+.. _create a pull request: https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request

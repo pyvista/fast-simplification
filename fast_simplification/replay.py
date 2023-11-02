@@ -89,8 +89,8 @@ def _map_isolated_points(points, edges, triangles, return_outliers=False):
         connexions = edges[~keep]
 
         a = np.isin(connexions, points_to_connect)
-        merged = connexions[np.where(a == True)]
-        target = connexions[np.where(a == False)]
+        merged = connexions[np.where(a)]
+        target = connexions[np.where(~a)]
 
         # Update the mapping array and the points to connect
         mapping[merged] = mapping[target]
@@ -109,8 +109,7 @@ def _map_isolated_points(points, edges, triangles, return_outliers=False):
     if return_outliers:
         isolated_points = points_to_connect
         return mapping, merged_points, isolated_points
-    else:
-        return mapping, merged_points
+    return mapping, merged_points
 
 
 @ascontiguous
@@ -176,11 +175,10 @@ def replay_simplification(points, triangles, collapses):
         load = _replay.load_int32
         triangles = triangles.astype(np.int32)
 
+    # Collapse the points
     n_faces = triangles.shape[0]
     n_points = points.shape[0]
-
-    # Collapse the points
-    load(points.shape[0], n_faces, collapses.shape[0], points, triangles, collapses)
+    load(n_points, n_faces, collapses.shape[0], points, triangles, collapses)
     _replay.replay()
     dec_points = _replay.return_points()
 
