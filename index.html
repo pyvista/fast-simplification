@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Python Fast-Quadric-Mesh-Simplification Wrapper &#8212; fast-simplification 0.1.4 documentation</title>
+    <title>Python Fast-Quadric-Mesh-Simplification Wrapper &#8212; fast-simplification 0.1.5 documentation</title>
   
   
   
@@ -40,7 +40,7 @@
 <link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=365ca57ee442770a23c6" />
   <script src="_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=365ca57ee442770a23c6"></script>
 
-    <script src="_static/documentation_options.js?v=fd825880"></script>
+    <script src="_static/documentation_options.js?v=59fadc99"></script>
     <script src="_static/doctools.js?v=888ff710"></script>
     <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
@@ -125,8 +125,8 @@
       
     
     
-    <img src="_static/pyvista_logo_sm.png" class="logo__image only-light" alt="fast-simplification 0.1.4 documentation - Home"/>
-    <script>document.write(`<img src="_static/pyvista_logo_sm.png" class="logo__image only-dark" alt="fast-simplification 0.1.4 documentation - Home"/>`);</script>
+    <img src="_static/pyvista_logo_sm.png" class="logo__image only-light" alt="fast-simplification 0.1.5 documentation - Home"/>
+    <script>document.write(`<img src="_static/pyvista_logo_sm.png" class="logo__image only-dark" alt="fast-simplification 0.1.5 documentation - Home"/>`);</script>
   
   
 </a></div>
@@ -529,6 +529,28 @@ will share the same topology.</p>
 <span class="gp">... </span>    <span class="n">decimated_meshes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pyvista</span><span class="o">.</span><span class="n">PolyData</span><span class="p">(</span><span class="n">points_out</span><span class="p">,</span> <span class="n">faces_out</span><span class="p">))</span>
 </pre></div>
 </div>
+</section>
+<section id="contributing">
+<h2>Contributing<a class="headerlink" href="#contributing" title="Link to this heading">#</a></h2>
+<p>Contribute to this repository by forking this repository and installing in
+development mode with:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/&lt;</span><span class="n">USERNAME</span><span class="o">&gt;/</span><span class="n">fast</span><span class="o">-</span><span class="n">simplification</span>
+<span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">e</span> <span class="o">.</span>
+<span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">r</span> <span class="n">requirements_test</span><span class="o">.</span><span class="n">txt</span>
+</pre></div>
+</div>
+<p>You can then add your feature or commit your bug fix and then run your unit
+testing with:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pytest</span>
+</pre></div>
+</div>
+<p>Unit testing will automatically enforce minimum code coverage standards.</p>
+<p>Next, to ensure your code meets minimum code styling standards, run:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">pre</span><span class="o">-</span><span class="n">commit</span>
+<span class="n">pre</span><span class="o">-</span><span class="n">commit</span> <span class="n">run</span> <span class="o">--</span><span class="nb">all</span><span class="o">-</span><span class="n">files</span>
+</pre></div>
+</div>
+<p>Finally, <a class="reference external" href="https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request">create a pull request</a> from your fork and I’ll be sure to review it.</p>
 <div class="toctree-wrapper compound">
 </div>
 <div class="toctree-wrapper compound">
@@ -560,7 +582,8 @@ will share the same topology.</p>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#basic-usage">Basic Usage</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#advanced-usage">Advanced Usage</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#comparison-to-other-libraries">Comparison to other libraries</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#replay-decimation-functionality">Replay decimation functionality</a><ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#replay-decimation-functionality">Replay decimation functionality</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#contributing">Contributing</a><ul class="nav section-nav flex-column">
 </ul>
 </li>
 </ul>

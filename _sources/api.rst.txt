@@ -1,7 +1,7 @@
 API Reference
 =============
 These are the three public methods that expose the fast-simplification API to
-Python.  
+Python.
 
 .. currentmodule:: fast_simplification
 
