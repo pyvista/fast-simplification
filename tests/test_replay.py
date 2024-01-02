@@ -74,6 +74,11 @@ def test_collapses_sphere(mesh):
         replay_faces,
         indice_mapping,
     ) = fast_simplification.replay_simplification(points, faces, collapses)
+
+    print(f"Number of points before simplification: {len(points)}")
+    print(f"Number of points after simplification: {len(points_out)}")
+    print(f"Shape of faces before simplification: {faces.shape}")
+    print(f"Shape of faces after simplification: {faces_out.shape}")
     assert np.allclose(points_out, replay_points)
     assert np.allclose(faces_out, replay_faces)
 

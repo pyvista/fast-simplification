@@ -112,6 +112,10 @@ def test_simplify_agg(mesh):
     # somewhere between the requested reduction and the original number of triangles
     assert triangles.shape[0] * reduction < faces.shape[0] < triangles.shape[0]
 
+    print(f"Original number of triangles: {triangles.shape[0]}")
+    print(f"Number of triangles after simplification: {faces.shape[0]}")
+    print(f"Min number of triangles: {reduction * triangles.shape[0]}")
+
 
 @skip_no_vtk
 def test_simplify_mesh(mesh):
