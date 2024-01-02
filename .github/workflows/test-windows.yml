@@ -35,4 +35,4 @@ jobs:
             uses: actions/upload-artifact@v3
             with:
               name: pytest-report
-              path: report.html
+              path: report-${{ matrix.os }}.html
