@@ -43,14 +43,7 @@ jobs:
       - name: Test
         run: |
           pip install -r requirements_test.txt
-          cd tests && python -m pytest -v --html=report.html --self-contained-html
-          mv report.html ../
-
-      - name: Archive code coverage results
-        uses: actions/upload-artifact@v3
-        with:
-          name: pytest-report
-          path: report.html
+          cd tests && python -m pytest -v
 
       - name: Upload sdist
         uses: actions/upload-artifact@v3
