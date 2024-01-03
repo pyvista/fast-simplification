@@ -129,8 +129,8 @@ jobs:
           find . -name '*.tar.gz' -exec mv {} dist/ \;
       - name: Display final files
         run: ls -R
-      - name: Publish package distributions to PyPI
-        uses: pypa/gh-action-pypi-publish@release/v1
+      # - name: Publish package distributions to PyPI
+      #   uses: pypa/gh-action-pypi-publish@release/v1
       # - name: Create GitHub Release
       #   uses: softprops/action-gh-release@v1
       #   with:
