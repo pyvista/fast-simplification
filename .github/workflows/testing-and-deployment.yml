@@ -46,9 +46,10 @@ jobs:
           cd tests && python -m pytest -v
 
       - name: Upload sdist
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           path: ./dist/*.tar.gz
+          name: fast-simplification-sdist
 
   docs_build:
     name: Build Documentation
@@ -91,7 +92,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest, macOS-latest]
+        os: [ubuntu-latest, windows-2019, macOS-latest]
 
     steps:
       - uses: actions/checkout@v3
@@ -102,10 +103,10 @@ jobs:
       - name: List generated wheels
         run: ls ./wheelhouse/*
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           path: ./wheelhouse/*.whl
-          name: fast-simplification-wheel
+          name: fast-simplification-wheel-${{ matrix.os }}
 
   release:
     name: Release
@@ -118,17 +119,12 @@ jobs:
     permissions:
       id-token: write  # this permission is mandatory for trusted publishing
     steps:
-      - uses: actions/download-artifact@v3
-        with:
-          path: dist/
-      - name: Display structure of downloaded files
-        run: ls -R
+      - uses: actions/download-artifact@v4
       - name: Flatten directory structure
         run: |
-          mv dist/fast-simplification-wheel/*/* dist/
-          rm -rf dist/fast-simplification-wheel/
-      - name: Display structure of downloaded files after flattening
-        run: ls -R
+          mkdir -p dist/
+          find . -name '*.whl' -exec mv {} dist/ \;
+          find . -name '*.tar.gz' -exec mv {} dist/ \;
       - name: Publish package distributions to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
       - name: Create GitHub Release
@@ -137,4 +133,3 @@ jobs:
           generate_release_notes: true
           files: |
             ./**/*.whl
-

@@ -11,6 +11,14 @@ For the full documentation visit: https://pyvista.github.io/fast-simplification/
 
 .. image:: https://github.com/pyvista/fast-simplification/raw/main/doc/images/simplify_demo.png
 
+Installation
+------------
+Fast Simplification can be installed from PyPI using pip on Python >= 3.7::
+
+  pip install fast-simplification
+
+See the `Contributing <https://github.com/pyvista/fast-simplification#contributing>`_ for more details regarding development or if the installation through pip doesn't work out.
+
 Basic Usage
 -----------
 The basic interface is quite straightforward and can work directly
@@ -204,7 +212,6 @@ will share the same topology.
    >>> for mesh in meshes:
    ...     points_out, faces_out, _ = fast_simplification.replay_simplification(mesh.points, mesh.faces, collapses)
    ...     decimated_meshes.append(pyvista.PolyData(points_out, faces_out))
-
 
 Contributing
 ------------
