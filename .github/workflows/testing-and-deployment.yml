@@ -49,6 +49,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           path: ./dist/*.tar.gz
+          name: fast-simplification-sdist
 
   docs_build:
     name: Build Documentation
@@ -105,7 +106,7 @@ jobs:
       - uses: actions/upload-artifact@v3
         with:
           path: ./wheelhouse/*.whl
-          name: fast-simplification-wheel
+          name: fast-simplification-wheel-${{ matrix.os }}
 
   release:
     name: Release
