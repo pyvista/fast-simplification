@@ -36,7 +36,7 @@ This example shows how to replay a decimation sequence with replay.
 
 
 
-.. code-block:: default
+.. code-block:: Python
 
     from time import time
 
@@ -202,7 +202,7 @@ This example shows how to replay a decimation sequence with replay.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 9.263 seconds)
+   **Total running time of the script:** (0 minutes 4.971 seconds)
 
 
 .. _sphx_glr_download_examples_replay.py:
@@ -211,16 +211,13 @@ This example shows how to replay a decimation sequence with replay.
 
   .. container:: sphx-glr-footer sphx-glr-footer-example
 
+    .. container:: sphx-glr-download sphx-glr-download-jupyter
 
-
+      :download:`Download Jupyter notebook: replay.ipynb <replay.ipynb>`
 
     .. container:: sphx-glr-download sphx-glr-download-python
 
       :download:`Download Python source code: replay.py <replay.py>`
-
-    .. container:: sphx-glr-download sphx-glr-download-jupyter
-
-      :download:`Download Jupyter notebook: replay.ipynb <replay.ipynb>`
 
 
 .. only:: html
