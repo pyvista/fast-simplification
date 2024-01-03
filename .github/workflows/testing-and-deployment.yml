@@ -122,9 +122,6 @@ jobs:
       - uses: actions/download-artifact@v3
         with:
           path: dist/
-      - name: Flatten directory structure
-        run: |
-          mv fast-simplification-wheel/*/* dist/
       - name: Display structure of downloaded files
         run: ls -R
       - name: Publish package distributions to PyPI
@@ -135,4 +132,3 @@ jobs:
           generate_release_notes: true
           files: |
             ./**/*.whl
-
