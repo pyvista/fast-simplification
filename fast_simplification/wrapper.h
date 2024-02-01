@@ -4,7 +4,7 @@
 namespace Simplify{
 
   // load triangles
-  void load_points(const int n_points, float* points){
+  void load_points(const int n_points, double* points){
     vertices.clear();
     // load vertices
     for (int ii = 0; ii < n_points; ii ++){
@@ -63,13 +63,13 @@ namespace Simplify{
   }
 
   void load_arrays_int32(const int n_points, const int n_tri,
-                         float* points, int* faces){
+                         double* points, int* faces){
     load_points(n_points, points);
     load_triangles(n_tri, faces);
   }
 
   void load_arrays_int64(const int n_points, const int n_tri,
-                         float* points, int64_t* faces){
+                         double* points, int64_t* faces){
     load_points(n_points, points);
     load_triangles_int64(n_tri, faces);
   }
@@ -101,7 +101,7 @@ namespace Simplify{
   }
 
   // populate a contiguous array with the points in the vertices vector
-  void get_points(float* points){
+  void get_points(double* points){
 
     // load vertices
     int n_points = vertices.size();
