@@ -12,10 +12,10 @@ from libcpp cimport bool
 
 
 cdef extern from "wrapper.h" namespace "Simplify":
-    void load_arrays_int32(const int, const int, float*, int*)
-    void load_arrays_int64(const int, const int, float*, int64_t*)
+    void load_arrays_int32(const int, const int, double*, int*)
+    void load_arrays_int64(const int, const int, double*, int64_t*)
     void simplify_mesh(int, double aggressiveness, bool verbose)
-    void get_points(float*)
+    void get_points(double*)
     void get_triangles(int*)
     void get_collapses(int*)
     int get_faces_int32(int*)
@@ -27,16 +27,16 @@ cdef extern from "wrapper.h" namespace "Simplify":
     int n_triangles()
     int n_collapses()
     int load_triangles_from_vtk(const int, int*)
-    void load_points(const int, float*)
+    void load_points(const int, double*)
 
 
 
-def load_int32(int n_points, int n_faces, float [:, ::1] points, int [:, ::1] faces):
+def load_int32(int n_points, int n_faces, double [:, ::1] points, int [:, ::1] faces):
     load_arrays_int32(n_points, n_faces, &points[0, 0], &faces[0, 0])
 
 
 def load_int64(
-        int n_points, int n_faces, float [:, ::1] points, int64_t [:, ::1] faces
+        int n_points, int n_faces, double [:, ::1] points, int64_t [:, ::1] faces
 ):
     load_arrays_int64(n_points, n_faces, &points[0, 0], &faces[0, 0])
 
@@ -59,7 +59,7 @@ def read(filename):
 
 
 def return_points():
-    cdef float [:, ::1] points = np.empty((n_points(), 3), np.float32)
+    cdef double [:, ::1] points = np.empty((n_points(), 3), np.float64)
     get_points(&points[0, 0])
     return np.array(points)
 
@@ -96,7 +96,7 @@ def return_faces_int64():
     return np.array(faces[:n_tri*4])
 
 
-def load_from_vtk(int n_points, float [:, ::1] points, int [::1] faces, int n_faces):
+def load_from_vtk(int n_points, double [:, ::1] points, int [::1] faces, int n_faces):
     result = load_triangles_from_vtk(n_faces, &faces[0])
     if result:
         raise ValueError(
