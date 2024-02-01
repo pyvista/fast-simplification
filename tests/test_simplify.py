@@ -88,6 +88,8 @@ def test_simplify(mesh):
     n_collapses = collapses.shape[0]
     assert n_points_after_simplification == n_points_before_simplification - n_collapses
 
+    assert points.dtype == np.float64
+
 
 @skip_no_vtk
 def test_simplify_agg(mesh):

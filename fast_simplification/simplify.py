@@ -1,4 +1,6 @@
 """Simplification library."""
+import numpy as np
+
 from . import _simplify
 from .utils import ascontiguous
 
@@ -38,14 +40,12 @@ def simplify(
 
     Parameters
     ----------
-    points : sequence
+    points : sequence[float | double]
         A ``(n, 3)`` array of points. May be a ``numpy.ndarray`` or a
-        list of points. For efficiency, provide points as a float32
-        array.
+        sequence of points. Internally converted to double precision.
     triangles : sequence
         A ``(n, 3)`` array of triangle indices. May be a
-        ``numpy.ndarray`` or a list of triangle indices. For
-        efficiency, provide points as a float32 array.
+        ``numpy.ndarray`` or a list of triangle indices.
     target_reduction : float, optional
         Fraction of the original mesh to remove.  If set to ``0.9``,
         this function will try to reduce the data set to 10% of its
@@ -110,10 +110,9 @@ def simplify(
 
 
     """
-    import numpy as np
-
     if not isinstance(points, np.ndarray):
-        points = np.array(points, dtype=np.float32)
+        points = np.array(points, dtype=np.float64)
+    points = points.astype(np.float64, copy=False)
     if not isinstance(triangles, np.ndarray):
         triangles = np.array(triangles, dtype=np.int32)
 
@@ -154,8 +153,7 @@ def simplify(
 
     if return_collapses:
         return points, faces, _simplify.return_collapses()
-    else:
-        return points, faces
+    return points, faces
 
 
 def simplify_mesh(mesh, target_reduction=None, target_count=None, agg=7, verbose=False):
@@ -207,7 +205,7 @@ def simplify_mesh(mesh, target_reduction=None, target_count=None, agg=7, verbose
     n_faces = mesh.n_faces
     _simplify.load_from_vtk(
         mesh.n_points,
-        mesh.points.astype(np.float32, copy=False),
+        mesh.points.astype(np.float64, copy=False),
         mesh.faces.astype(np.int32, copy=False),
         n_faces,
     )
