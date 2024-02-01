@@ -123,9 +123,9 @@ Compare decimation times
                     Use `pv.PolyData.n_cells` or `pv.PolyData.n_faces_strict` instead.
                     See the documentation in '`pv.PolyData.n_faces` for more information.
       warnings.warn(
-    Fast Quadratic Simplification    0.5781 seconds
-    vtkQuadricDecimation             2.8514 seconds
-    vtkDecimatePro                   2.7504 seconds
+    Fast Quadratic Simplification    0.5862 seconds
+    vtkQuadricDecimation             3.0158 seconds
+    vtkDecimatePro                   2.8669 seconds
 
 
 
@@ -133,7 +133,7 @@ Compare decimation times
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 7.670 seconds)
+   **Total running time of the script:** (0 minutes 7.964 seconds)
 
 
 .. _sphx_glr_download_examples_simplify.py:
