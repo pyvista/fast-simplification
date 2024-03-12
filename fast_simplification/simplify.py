@@ -1,4 +1,5 @@
 """Simplification library."""
+
 import numpy as np
 
 from . import _simplify

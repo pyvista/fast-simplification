@@ -1,4 +1,5 @@
 """Setup for fast-simplification."""
+
 import builtins
 from io import open as io_open
 import os
