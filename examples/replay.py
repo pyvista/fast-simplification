@@ -5,6 +5,7 @@ Replay Decimation
 This example shows how to replay a decimation sequence with replay.
 
 """
+
 from time import time
 
 import numpy as np
