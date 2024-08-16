@@ -1,4 +1,4 @@
-https://github.com/numpy/numpydoc/archive/main.zip  # need latest
+numpydoc>=1.8.0
 pydata-sphinx-theme
 pyvista
 Sphinx>=4.0.0

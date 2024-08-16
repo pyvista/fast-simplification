@@ -1,4 +1,5 @@
 """Setup for fast-simplification."""
+
 import builtins
 from io import open as io_open
 import os
@@ -72,13 +73,13 @@ setup(
         "Development Status :: 4 - Beta",
         "Intended Audience :: Science/Research",
         "License :: OSI Approved :: MIT License",
-        "Programming Language :: Python :: 3.7",
-        "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
+        "Programming Language :: Python :: 3.12",
     ],
     url="https://github.com/pyvista/fast-simplification",
+    python_requires=">=3.9",
     # Build cython modules
     cmdclass={"build_ext": build_ext},
     ext_modules=[
@@ -98,5 +99,5 @@ setup(
         ),
     ],
     keywords="fast-simplification decimation",
-    install_requires=["numpy>=1.16.0"],
+    install_requires=["numpy>=2.0"],
 )
