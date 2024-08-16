@@ -34,6 +34,7 @@ skip_glob = ["__init__.py"]
 src_paths = ["doc", "fast_simplification", "tests"]
 
 [tool.codespell]
+ignore-words-list = 'THIRDPARTY'
 skip = '*.pyc,*.txt,*.gif,*.png,*.jpg,*.js,*.html,*.doctree,*.ttf,*.woff,*.woff2,*.eot,*.mp4,*.inv,*.pickle,*.ipynb,flycheck*,./.git/*,./.hypothesis/*,*.yml,./doc/build/*,./doc/images/*,./dist/*,*~,.hypothesis*,./doc/source/examples/*,*cover,*.dat,*.mac,build,fast_simplification/Simplify.h,PKG-INFO,*.mypy_cache/*,./docker/mapdl/*,./_unused/*'
 quiet-level = 3
 
