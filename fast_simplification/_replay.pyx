@@ -135,7 +135,7 @@ def compute_indice_mapping(int[:, :] collapses, int n_points):
     cdef int i = 0
     cdef int j = 0
 
-    cdef long[:] application = np.zeros(n_points, dtype=int)
+    cdef int[:] application = np.zeros(n_points, dtype=np.int32)
     for i in range(n_points):
         if j == len(keep):
             break
@@ -148,7 +148,7 @@ def compute_indice_mapping(int[:, :] collapses, int n_points):
     return indice_mapping
 
 
-def clean_triangles_and_edges(long[:, :] mapped_triangles, bool clean_edges=False):
+def clean_triangles_and_edges(int[:, :] mapped_triangles, bool clean_edges=False):
     """Return the edges and triangles of a mesh from mapped triangles
 
     Args:
@@ -164,8 +164,8 @@ def clean_triangles_and_edges(long[:, :] mapped_triangles, bool clean_edges=Fals
     cdef int n_edges = 0
     cdef int n_triangles = 0
     cdef int N = len(mapped_triangles)
-    cdef long[:, :] edges_with_rep = np.zeros((N, 2), dtype=int)
-    cdef long[:, :] triangles = np.zeros((N, 3), dtype=int)
+    cdef int[:, :] edges_with_rep = np.zeros((N, 2), dtype=np.int32)
+    cdef int[:, :] triangles = np.zeros((N, 3), dtype=np.int32)
 
     for i in range(N):
         j = mapped_triangles[i, 0]
@@ -201,11 +201,11 @@ def clean_triangles_and_edges(long[:, :] mapped_triangles, bool clean_edges=Fals
         return np.asarray(edges_with_rep)[:n_edges, :], np.asarray(triangles)[:n_triangles, :]
 
 
-    cdef long[:, :] edges = np.zeros((n_edges, 2), dtype=int)
+    cdef int[:, :] edges = np.zeros((n_edges, 2), dtype=np.int32)
 
 
     # Lexicographic sort
-    cdef long[:] order = np.lexsort((np.asarray(edges_with_rep[:n_edges, 1]), np.asarray(edges_with_rep[:n_edges, 0])))
+    cdef int[:] order = np.lexsort((np.asarray(edges_with_rep[:n_edges, 1]), np.asarray(edges_with_rep[:n_edges, 0])))
     # Remove duplicates
     cdef int n_keep_edges = 1
     edges[0, :] = edges_with_rep[order[0], :]
