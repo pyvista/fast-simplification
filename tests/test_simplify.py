@@ -119,4 +119,4 @@ def test_simplify_agg(mesh):
 def test_simplify_mesh(mesh):
     reduction = 0.5
     mesh_out = fast_simplification.simplify_mesh(mesh, reduction)
-    assert mesh_out.n_faces == mesh.n_faces * reduction
+    assert mesh_out.n_cells == mesh.n_cells * reduction
