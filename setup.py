@@ -99,5 +99,5 @@ setup(
         ),
     ],
     keywords="fast-simplification decimation",
-    install_requires=["numpy>=1.16.0"],
+    install_requires=["numpy>=2.0"],
 )
