@@ -200,10 +200,7 @@ def simplify_mesh(mesh, target_reduction=None, target_count=None, agg=7, verbose
             "Please install pyvista to use this feature with:\n" "pip install pyvista"
         )
 
-    # installed by pyvista
-    import numpy as np
-
-    n_faces = mesh.n_faces
+    n_faces = mesh.n_cells
     _simplify.load_from_vtk(
         mesh.n_points,
         mesh.points.astype(np.float64, copy=False),
