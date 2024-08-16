@@ -11,7 +11,7 @@
         :class: sphx-glr-download-link-note
 
         :ref:`Go to the end <sphx_glr_download_examples_simplify.py>`
-        to download the full example code
+        to download the full example code.
 
 .. rst-class:: sphx-glr-example-title
 
@@ -119,13 +119,9 @@ Compare decimation times
  .. code-block:: none
 
     Approach                         Time Elapsed
-    /opt/hostedtoolcache/Python/3.10.13/x64/lib/python3.10/site-packages/pyvista/core/pointset.py:1129: PyVistaDeprecationWarning: The current behavior of `pv.PolyData.n_faces` has been deprecated.
-                    Use `pv.PolyData.n_cells` or `pv.PolyData.n_faces_strict` instead.
-                    See the documentation in '`pv.PolyData.n_faces` for more information.
-      warnings.warn(
-    Fast Quadratic Simplification    0.5862 seconds
-    vtkQuadricDecimation             3.0158 seconds
-    vtkDecimatePro                   2.8669 seconds
+    Fast Quadratic Simplification    0.4718 seconds
+    vtkQuadricDecimation             2.2191 seconds
+    vtkDecimatePro                   1.6827 seconds
 
 
 
@@ -133,7 +129,7 @@ Compare decimation times
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 7.964 seconds)
+   **Total running time of the script:** (0 minutes 5.573 seconds)
 
 
 .. _sphx_glr_download_examples_simplify.py:
@@ -149,6 +145,10 @@ Compare decimation times
     .. container:: sphx-glr-download sphx-glr-download-python
 
       :download:`Download Python source code: simplify.py <simplify.py>`
+
+    .. container:: sphx-glr-download sphx-glr-download-zip
+
+      :download:`Download zipped: simplify.zip <simplify.zip>`
 
 
 .. only:: html

@@ -11,6 +11,7 @@ functionality using `pyvista <https://docs.pyvista.org/>`__.
 
     <div class="sphx-glr-thumbnails">
 
+.. thumbnail-parent-div-open
 
 .. raw:: html
 
@@ -45,6 +46,8 @@ functionality using `pyvista <https://docs.pyvista.org/>`__.
       <div class="sphx-glr-thumbnail-title">Compare Decimation Methods</div>
     </div>
 
+
+.. thumbnail-parent-div-close
 
 .. raw:: html
 
