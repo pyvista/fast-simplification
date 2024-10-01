@@ -71,7 +71,7 @@ jobs:
     - name: Build Documentation
       run: |
         pip install -r requirements_docs.txt
-        xvfb-run make -C doc html
+        make -C doc html
 
     - name: Deploy on tag
       uses: JamesIves/github-pages-deploy-action@v4
