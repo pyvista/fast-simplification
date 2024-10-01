@@ -24,12 +24,10 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
-        python-version: '3.10'
+        python-version: '3.12'
 
-    - name: Install OS packages
-      run: |
-        sudo apt update
-        sudo apt install libgl1-mesa-glx
+    - name: Setup headless display
+      uses: pyvista/setup-headless-display-action@v2
 
     - name: Build and validate wheel
       run: |
@@ -62,12 +60,10 @@ jobs:
     - name: Setup Python
       uses: actions/setup-python@v5
       with:
-        python-version: '3.10'
+        python-version: '3.12'
 
-    - name: Install OS packages
-      run: |
-        sudo apt update
-        sudo apt install libgl1-mesa-glx xvfb
+    - name: Setup headless display
+      uses: pyvista/setup-headless-display-action@v2
 
     - name: Install library
       run: pip install .
