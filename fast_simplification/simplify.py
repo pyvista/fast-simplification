@@ -9,9 +9,7 @@ from .utils import ascontiguous
 def _check_args(target_reduction, target_count, n_faces):
     """Check arguments."""
     if target_reduction and target_count:
-        raise ValueError(
-            "You may specify ``target_reduction`` or ``target_count``, but not" " both"
-        )
+        raise ValueError("You may specify ``target_reduction`` or ``target_count``, but not both")
     if target_reduction is None and target_count is None:
         raise ValueError("You must specify ``target_reduction`` or ``target_count``")
 
@@ -196,9 +194,7 @@ def simplify_mesh(mesh, target_reduction=None, target_count=None, agg=7, verbose
     try:
         import pyvista as pv
     except ImportError:
-        raise ImportError(
-            "Please install pyvista to use this feature with:\n" "pip install pyvista"
-        )
+        raise ImportError("Please install pyvista to use this feature with:\npip install pyvista")
 
     n_faces = mesh.n_cells
     _simplify.load_from_vtk(
