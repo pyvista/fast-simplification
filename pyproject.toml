@@ -9,7 +9,7 @@ requires = [
 
 [tool.cibuildwheel]
 archs = ["auto64"]  # 64-bit only
-skip = "cp313-* pp* *musllinux*"  # Build CPython 3.9 - 3.13
+skip = "cp314-* pp* *musllinux*"  # Build CPython 3.9 - 3.13
 test-command = "pytest {project}/tests"
 test-requires = "pyvista pytest"
 
