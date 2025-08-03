@@ -70,7 +70,7 @@ def simplify(
         collapse, the vertex ``i1`` was collapsed into the vertex
         ``i0``.
     lossless : bool, optional
-        If True, simplify the mesh losslessly. 
+        If True, simplify the mesh losslessly.
 
     Returns
     -------
