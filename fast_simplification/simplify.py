@@ -34,6 +34,7 @@ def simplify(
     agg=7,
     verbose=False,
     return_collapses=False,
+    lossless=False,
 ):
     """Simplify a triangular mesh.
 
@@ -68,6 +69,8 @@ def simplify(
         ``collapses[i] = [i0, i1]`` means that durint the i-th
         collapse, the vertex ``i1`` was collapsed into the vertex
         ``i0``.
+    lossless : bool, optional
+        If True, simplify the mesh losslessly. 
 
     Returns
     -------
@@ -107,11 +110,9 @@ def simplify(
     ... ]
     >>> points_out, faces_out = fast_simplification.simplify(points, faces, 0.5)
 
-
     """
-    if not isinstance(points, np.ndarray):
-        points = np.array(points, dtype=np.float64)
-    points = points.astype(np.float64, copy=False)
+
+    points = np.asarray(points, dtype=np.float64)
     if not isinstance(triangles, np.ndarray):
         triangles = np.array(triangles, dtype=np.int32)
 
@@ -126,10 +127,8 @@ def simplify(
         raise ValueError(f"Expected ``triangles`` array to be (n, 3), not {triangles.shape}")
 
     n_faces = triangles.shape[0]
-    target_count = _check_args(target_reduction, target_count, n_faces)
 
-    if not triangles.flags.c_contiguous:
-        triangles = np.ascontiguousarray(triangles)
+    triangles = np.ascontiguousarray(triangles)
 
     if triangles.dtype == np.int32:
         load = _simplify.load_int32
@@ -146,7 +145,11 @@ def simplify(
         triangles,
     )
 
-    _simplify.simplify(target_count, agg, verbose)
+    if lossless:
+        _simplify.simplify_lossless(verbose)
+    else:
+        target_count = _check_args(target_reduction, target_count, n_faces)
+        _simplify.simplify(target_count, agg, verbose)
     points = _simplify.return_points()
     faces = _simplify.return_faces_int32_no_padding().reshape(-1, 3)
 
@@ -199,8 +202,8 @@ def simplify_mesh(mesh, target_reduction=None, target_count=None, agg=7, verbose
     n_faces = mesh.n_cells
     _simplify.load_from_vtk(
         mesh.n_points,
-        mesh.points.astype(np.float64, copy=False),
-        mesh.faces.astype(np.int32, copy=False),
+        mesh.points.astype(np.float64, order="C", copy=False),
+        mesh.faces.astype(np.int32, order="C", copy=False),
         n_faces,
     )
 
