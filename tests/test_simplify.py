@@ -65,7 +65,7 @@ def test_simplify_trivial():
 
 @skip_no_vtk
 def test_simplify_none(mesh):
-    triangles = mesh.faces.reshape(-1, 4)[:, 1:]
+    triangles = mesh._connectivity_array.reshape(-1, 3)
 
     reduction = 0
     points, faces = fast_simplification.simplify(mesh.points, triangles, reduction)
@@ -75,7 +75,7 @@ def test_simplify_none(mesh):
 
 @skip_no_vtk
 def test_simplify(mesh):
-    triangles = mesh.faces.reshape(-1, 4)[:, 1:]
+    triangles = mesh._connectivity_array.reshape(-1, 3)
     reduction = 0.5
     points, faces, collapses = fast_simplification.simplify(
         mesh.points, triangles, reduction, return_collapses=True
@@ -92,8 +92,17 @@ def test_simplify(mesh):
 
 
 @skip_no_vtk
+def test_simplify_lossless(mesh):
+    triangles = mesh._connectivity_array.reshape(-1, 3)
+    reduction = 0.5
+    points, faces = fast_simplification.simplify(mesh.points, triangles, reduction, lossless=True)
+    assert np.allclose(mesh.points, points)
+    assert np.allclose(triangles, faces)
+
+
+@skip_no_vtk
 def test_simplify_agg(mesh):
-    triangles = mesh.faces.reshape(-1, 4)[:, 1:]
+    triangles = mesh._connectivity_array.reshape(-1, 3)
 
     reduction = 0.5
     points, faces = fast_simplification.simplify(
