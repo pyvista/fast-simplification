@@ -119,9 +119,25 @@ Compare decimation times
  .. code-block:: none
 
     Approach                         Time Elapsed
-    Fast Quadratic Simplification    0.5506 seconds
-    vtkQuadricDecimation             3.1876 seconds
-    vtkDecimatePro                   2.9425 seconds
+    Fast Quadratic Simplification    0.4882 seconds
+    vtkQuadricDecimation             2.7568 seconds
+    vtkDecimatePro                   2.3477 seconds
+    /home/runner/work/fast-simplification/fast-simplification/examples/simplify.py:49: PyVistaDeprecationWarning: 
+    simplify.py:49: Argument 'position' must be passed as a keyword argument to function 'BasePlotter.add_text'.
+    From version 0.50, passing this as a positional argument will result in a TypeError.
+      pl.add_text("Original", "upper_right", color="k")
+    /home/runner/work/fast-simplification/fast-simplification/examples/simplify.py:54: PyVistaDeprecationWarning: 
+    simplify.py:54: Argument 'position' must be passed as a keyword argument to function 'BasePlotter.add_text'.
+    From version 0.50, passing this as a positional argument will result in a TypeError.
+      pl.add_text(
+    /home/runner/work/fast-simplification/fast-simplification/examples/simplify.py:64: PyVistaDeprecationWarning: 
+    simplify.py:64: Argument 'position' must be passed as a keyword argument to function 'BasePlotter.add_text'.
+    From version 0.50, passing this as a positional argument will result in a TypeError.
+      pl.add_text(f"vtkQuadricDecimation\n{dec_std_time:8.4f} seconds", "upper_right", color="k")
+    /home/runner/work/fast-simplification/fast-simplification/examples/simplify.py:69: PyVistaDeprecationWarning: 
+    simplify.py:69: Argument 'position' must be passed as a keyword argument to function 'BasePlotter.add_text'.
+    From version 0.50, passing this as a positional argument will result in a TypeError.
+      pl.add_text(f"vtkDecimatePro\n{dec_pro_time:8.4f} seconds", "upper_right", color="k")
 
 
 
@@ -129,7 +145,7 @@ Compare decimation times
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 8.014 seconds)
+   **Total running time of the script:** (0 minutes 6.946 seconds)
 
 
 .. _sphx_glr_download_examples_simplify.py:
