@@ -19,10 +19,10 @@ jobs:
     runs-on: ubuntu-latest
     name: Smoke Testing
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v5
 
     - name: Set up Python
-      uses: actions/setup-python@v5
+      uses: actions/setup-python@v6
       with:
         python-version: '3.12'
 
@@ -44,7 +44,7 @@ jobs:
         cd tests && python -m pytest -v
 
     - name: Upload sdist
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       with:
         path: ./dist/*.tar.gz
         name: fast-simplification-sdist
@@ -55,10 +55,10 @@ jobs:
     needs: smoke_testing
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v5
 
     - name: Setup Python
-      uses: actions/setup-python@v5
+      uses: actions/setup-python@v6
       with:
         python-version: '3.12'
 
@@ -91,15 +91,15 @@ jobs:
         os: [ubuntu-latest, windows-2025, macos-14, macos-13]
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v5
 
     - name: Build wheels
-      uses: pypa/cibuildwheel@v2.23.3
+      uses: pypa/cibuildwheel@v3.2.1
 
     - name: List generated wheels
       run: ls ./wheelhouse/*
 
-    - uses: actions/upload-artifact@v4
+    - uses: actions/upload-artifact@v5
       with:
         path: ./wheelhouse/*.whl
         name: fast-simplification-wheel-${{ matrix.os }}
@@ -116,7 +116,7 @@ jobs:
       id-token: write  # this permission is mandatory for trusted publishing
       contents: write  # required to create a release
     steps:
-    - uses: actions/download-artifact@v4
+    - uses: actions/download-artifact@v6
     - name: Flatten directory structure
       run: |
         mkdir -p dist/
