@@ -7,5 +7,5 @@ version_info = 0, 27, 'dev0'
 
 """
 
-version_info = 0, 1, 12
+version_info = 0, 1, 13
 __version__ = ".".join(map(str, version_info))
