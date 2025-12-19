@@ -22,7 +22,7 @@ functionality using `pyvista <https://docs.pyvista.org/>`__.
   .. image:: /examples/images/thumb/sphx_glr_replay_thumb.png
     :alt:
 
-  :ref:`sphx_glr_examples_replay.py`
+  :doc:`/examples/replay`
 
 .. raw:: html
 
@@ -39,7 +39,7 @@ functionality using `pyvista <https://docs.pyvista.org/>`__.
   .. image:: /examples/images/thumb/sphx_glr_simplify_thumb.png
     :alt:
 
-  :ref:`sphx_glr_examples_simplify.py`
+  :doc:`/examples/simplify`
 
 .. raw:: html
 
