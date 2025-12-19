@@ -9,12 +9,31 @@ requires = [
 
 [tool.cibuildwheel]
 archs = ["auto64"]  # 64-bit only
-skip = "cp314-* pp* *musllinux*"  # Build CPython 3.9 - 3.13
+before-build = "pip install abi3audit"
+build = "cp310-* cp311-*"  # 3.11+ are abi3 wheels
+skip = "*musllinux*"
 test-command = "pytest {project}/tests"
 test-requires = "pyvista pytest"
 
+[tool.cibuildwheel.linux]
+repair-wheel-command = [
+  "auditwheel repair -w {dest_dir} {wheel}",
+  "bash tools/audit_wheel.sh {wheel}"
+]
+
 [tool.cibuildwheel.macos]
 archs = ["native"]
+repair-wheel-command = [
+  "delocate-wheel --require-archs {delocate_archs} -w {dest_dir} -v {wheel}",
+  "bash tools/audit_wheel.sh {wheel}"
+]
+
+[tool.cibuildwheel.windows]
+before-build = "pip install delvewheel abi3audit"
+repair-wheel-command = [
+  "delvewheel repair -w {dest_dir} {wheel}",
+  "bash tools/audit_wheel.sh {wheel}"
+]
 
 [tool.codespell]
 ignore-words-list = 'THIRDPARTY'
