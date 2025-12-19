@@ -15,7 +15,7 @@ filepath = os.path.dirname(__file__)
 # Define macros for cython
 macros = []
 ext_kwargs = {}
-setup_kwargs = {}
+setup_kwargs = {"cmdclass": {}}
 if os.name == "nt":  # windows
     extra_compile_args = ["/openmp", "/O2", "/w", "/GS"]
 elif os.name == "posix":  # linux org mac os
@@ -47,7 +47,7 @@ if sys.version_info.minor >= 11 and platform.python_implementation() == "CPython
     # Can create an abi3 wheel (typed memoryviews first available in 3.11)!
     macros.append(("Py_LIMITED_API", "0x030B0000"))
     ext_kwargs["py_limited_api"] = True
-    setup_kwargs["cmdclass"] = {"bdist_wheel": bdist_wheel_abi3}
+    setup_kwargs["cmdclass"]["bdist_wheel":bdist_wheel_abi3]
 
 
 # Get version from version info
