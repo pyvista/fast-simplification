@@ -1,9 +1,18 @@
 """Simplification library."""
 
+from typing import TYPE_CHECKING
+
 import numpy as np
+from numpy.typing import NDArray
 
 from . import _simplify
 from .utils import ascontiguous
+
+if TYPE_CHECKING:
+    try:
+        from pyvista.core.pointset import PolyData
+    except ModuleNotFoundError:
+        pass
 
 
 def _check_args(target_reduction, target_count, n_faces):
@@ -27,14 +36,17 @@ def _check_args(target_reduction, target_count, n_faces):
 
 @ascontiguous
 def simplify(
-    points,
-    triangles,
-    target_reduction=None,
-    target_count=None,
-    agg=7,
-    verbose=False,
-    return_collapses=False,
-    lossless=False,
+    points: NDArray[np.float64],
+    triangles: NDArray[np.int32],
+    target_reduction: float | None = None,
+    target_count: int | None = None,
+    agg: float = 7.0,
+    verbose: bool = False,
+    return_collapses: bool = False,
+    lossless: bool = False,
+) -> (
+    tuple[NDArray[np.float64], NDArray[np.int64]]
+    | tuple[NDArray[np.float64], NDArray[np.int64], NDArray[np.int64]]
 ):
     """Simplify a triangular mesh.
 
@@ -54,21 +66,18 @@ def simplify(
     target_count : int, optional
         Target number of triangles to reduce mesh to.  This may be
         used in place of ``target_reduction``, but both cannot be set.
-    agg : int, optional
-        Controls how aggressively to decimate the mesh.  A value of 10
-        will result in a fast decimation at the expense of mesh
-        quality and shape.  A value of 0 will attempt to preserve the
-        original mesh geometry at the expense of time.  Setting a low
-        value may result in being unable to reach the
-        ``target_reduction`` or ``target_count``.
+    agg : float, default: 7.0
+        Controls how aggressively to decimate the mesh.  A value of 10 will
+        result in a fast decimation at the expense of mesh quality and shape.
+        A value of 0 will attempt to preserve the original mesh geometry at the
+        expense of time.  Setting a low value may result in being unable to
+        reach the ``target_reduction`` or ``target_count``.
     verbose : bool, optional
         Enable verbose output when simplifying the mesh.
     return_collapses : bool, optional
-        If True, return the history of collapses as a
-        ``(n_collapses, 2)`` array of indices.
-        ``collapses[i] = [i0, i1]`` means that durint the i-th
-        collapse, the vertex ``i1`` was collapsed into the vertex
-        ``i0``.
+        If True, return the history of collapses as a ``(n_collapses, 2)``
+        array of indices.  ``collapses[i] = [i0, i1]`` means that durint the
+        i-th collapse, the vertex ``i1`` was collapsed into the vertex ``i0``.
     lossless : bool, optional
         If True, simplify the mesh losslessly.
 
@@ -158,7 +167,13 @@ def simplify(
     return points, faces
 
 
-def simplify_mesh(mesh, target_reduction=None, target_count=None, agg=7, verbose=False):
+def simplify_mesh(
+    mesh: "PolyData",
+    target_reduction: float | None = None,
+    target_count: int | None = None,
+    agg: float = 7.0,
+    verbose: bool = False,
+):
     """Simplify a pyvista mesh.
 
     Parameters
@@ -166,20 +181,19 @@ def simplify_mesh(mesh, target_reduction=None, target_count=None, agg=7, verbose
     mesh : pyvista.PolyData
         PyVista mesh.
     target_reduction : float
-        Fraction of the original mesh to remove.  If set to ``0.9``,
+        Fraction of the original mesh to remove. If set to ``0.9``,
         this function will try to reduce the data set to 10% of its
         original size and will remove 90% of the input triangles. Use
         this parameter or ``target_count``.
     target_count : int, optional
-        Target number of triangles to reduce mesh to.  This may be
-        used in place of ``target_reduction``, but both cannot be set.
-    agg : int, optional
-        Controls how aggressively to decimate the mesh.  A value of 10
-        will result in a fast decimation at the expense of mesh
-        quality and shape.  A value of 0 will attempt to preserve the
-        original mesh geometry at the expense of time.  Setting a low
-        value may result in being unable to reach the
-        ``target_reduction`` or ``target_count``.
+        Target number of triangles to reduce mesh to. This may be used in
+        place of ``target_reduction``, but both cannot be set.
+    agg : float, default: 7.0
+        Controls how aggressively to decimate the mesh. A value of ``10.0`` will
+        result in a fast decimation at the expense of mesh quality and shape.
+        A value of ``0.0`` will attempt to preserve the original mesh geometry at the
+        expense of time. Setting a low value may result in being unable to
+        reach the ``target_reduction`` or ``target_count``.
     verbose : bool, optional
         Enable verbose output when simplifying the mesh.
 
