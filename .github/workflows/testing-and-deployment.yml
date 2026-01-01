@@ -44,7 +44,7 @@ jobs:
         cd tests && python -m pytest -v
 
     - name: Upload sdist
-      uses: actions/upload-artifact@v5
+      uses: actions/upload-artifact@v6
       with:
         path: ./dist/*.tar.gz
         name: fast-simplification-sdist
@@ -99,7 +99,7 @@ jobs:
     - name: List generated wheels
       run: ls ./wheelhouse/*
 
-    - uses: actions/upload-artifact@v5
+    - uses: actions/upload-artifact@v6
       with:
         path: ./wheelhouse/*.whl
         name: fast-simplification-wheel-${{ matrix.os }}
