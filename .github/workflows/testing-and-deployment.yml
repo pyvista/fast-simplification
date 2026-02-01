@@ -94,7 +94,7 @@ jobs:
     - uses: actions/checkout@v6
 
     - name: Build wheels
-      uses: pypa/cibuildwheel@v3.3.0
+      uses: pypa/cibuildwheel@v3.3.1
 
     - name: List generated wheels
       run: ls ./wheelhouse/*
