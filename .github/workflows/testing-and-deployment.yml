@@ -44,7 +44,7 @@ jobs:
         cd tests && python -m pytest -v
 
     - name: Upload sdist
-      uses: actions/upload-artifact@v6
+      uses: actions/upload-artifact@v7
       with:
         path: ./dist/*.tar.gz
         name: fast-simplification-sdist
@@ -99,7 +99,7 @@ jobs:
     - name: List generated wheels
       run: ls ./wheelhouse/*
 
-    - uses: actions/upload-artifact@v6
+    - uses: actions/upload-artifact@v7
       with:
         path: ./wheelhouse/*.whl
         name: fast-simplification-wheel-${{ matrix.os }}
@@ -116,7 +116,7 @@ jobs:
       id-token: write  # this permission is mandatory for trusted publishing
       contents: write  # required to create a release
     steps:
-    - uses: actions/download-artifact@v7
+    - uses: actions/download-artifact@v8
     - name: Flatten directory structure
       run: |
         mkdir -p dist/
