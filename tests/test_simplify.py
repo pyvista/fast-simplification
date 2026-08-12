@@ -175,12 +175,8 @@ def test_preserve_border():
 
     # Standard path: without protection the border is eroded, with protection
     # it is retained exactly.
-    out_free = fast_simplification.simplify_mesh(
-        mesh, target_reduction=0.9, preserve_border=False
-    )
-    out_kept = fast_simplification.simplify_mesh(
-        mesh, target_reduction=0.9, preserve_border=True
-    )
+    out_free = fast_simplification.simplify_mesh(mesh, target_reduction=0.9, preserve_border=False)
+    out_kept = fast_simplification.simplify_mesh(mesh, target_reduction=0.9, preserve_border=True)
     assert _n_boundary_points(out_free) < n_border_in
     assert _n_boundary_points(out_kept) == n_border_in
 
@@ -194,9 +190,7 @@ def test_preserve_border():
     )
 
     def _as_polydata(points, faces):
-        cells = np.hstack(
-            [np.full((faces.shape[0], 1), 3, dtype=np.int64), faces.astype(np.int64)]
-        )
+        cells = np.hstack([np.full((faces.shape[0], 1), 3, dtype=np.int64), faces.astype(np.int64)])
         return pv.PolyData(points, cells)
 
     assert _n_boundary_points(_as_polydata(p_free, f_free)) < n_border_in
