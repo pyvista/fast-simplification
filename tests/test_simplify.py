@@ -129,3 +129,25 @@ def test_simplify_mesh(mesh):
     reduction = 0.5
     mesh_out = fast_simplification.simplify_mesh(mesh, reduction)
     assert mesh_out.n_cells == mesh.n_cells * reduction
+
+
+@skip_no_vtk
+def test_simplify_mesh_fixed_size_storage(mesh):
+    reduction = 0.5
+    mesh_out = fast_simplification.simplify_mesh(mesh, reduction)
+
+    # decimated output is uniformly triangular
+    assert mesh_out.n_cells == mesh.n_cells * reduction
+    assert mesh_out.is_all_triangles
+    assert mesh_out.n_verts == 0
+    assert mesh_out.n_lines == 0
+
+    # geometry is correct: reconstruct the triangle connectivity and confirm
+    # it matches the padded-faces path
+    points, faces = fast_simplification.simplify(mesh.points, mesh.regular_faces, reduction)
+    assert np.allclose(mesh_out.points, points)
+    assert np.array_equal(mesh_out.regular_faces, faces)
+
+    # on VTK >= 9.6.2 the polys use fixed-size storage (no explicit offsets)
+    if pv.vtk_version_info >= (9, 6, 2):
+        assert mesh_out.GetPolys().IsStorageFixedSize()
