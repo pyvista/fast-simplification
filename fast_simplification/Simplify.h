@@ -346,7 +346,7 @@ namespace Simplify
 	//                 more iterations yield higher quality
 	//
 
-	void simplify_mesh(int target_count, double agressiveness=7, bool verbose=false)
+	void simplify_mesh(int target_count, double agressiveness=7, bool verbose=false, bool preserve_border=false)
 	{
 
 		// init
@@ -403,7 +403,11 @@ namespace Simplify
 					int i0=t.v[ j     ]; Vertex &v0 = vertices[i0];
 					int i1=t.v[(j+1)%3]; Vertex &v1 = vertices[i1];
 					// Border check
-					if(v0.border != v1.border)  continue;
+					if (preserve_border) {
+						if (v0.border || v1.border) continue;  // keep all open-border vertices
+					} else if (v0.border != v1.border) {
+						continue;  // base behaviour
+					}
 
 					// Compute vertex to collapse to
 					vec3f p;
@@ -458,7 +462,7 @@ namespace Simplify
 
 	} //simplify_mesh()
 
-	void simplify_mesh_lossless(bool verbose=false)
+	void simplify_mesh_lossless(bool verbose=false, bool preserve_border=false)
 	{
 		// init
 		loopi(0,triangles.size()) triangles[i].deleted=0;
@@ -501,7 +505,11 @@ namespace Simplify
 					int i1=t.v[(j+1)%3]; Vertex &v1 = vertices[i1];
 
 					// Border check
-					if(v0.border != v1.border)  continue;
+					if (preserve_border) {
+						if (v0.border || v1.border) continue;  // keep all open-border vertices
+					} else if (v0.border != v1.border) {
+						continue;  // base behaviour
+					}
 
 					// Compute vertex to collapse to
 					vec3f p;

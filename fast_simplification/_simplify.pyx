@@ -14,8 +14,8 @@ from libcpp cimport bool
 cdef extern from "wrapper.h" namespace "Simplify":
     void load_arrays_int32(const int, const int, double*, int*)
     void load_arrays_int64(const int, const int, double*, int64_t*)
-    void simplify_mesh(int, double aggressiveness, bool verbose)
-    void simplify_mesh_lossless(bool)
+    void simplify_mesh(int, double aggressiveness, bool verbose, bool preserve_border)
+    void simplify_mesh_lossless(bool, bool preserve_border)
     void get_points(double*)
     void get_triangles(int*)
     void get_collapses(int*)
@@ -42,11 +42,11 @@ def load_int64(
     load_arrays_int64(n_points, n_faces, &points[0, 0], &faces[0, 0])
 
 
-def simplify(int target_count, double aggressiveness=7, bool verbose=False):
-    simplify_mesh(target_count, aggressiveness, verbose)
+def simplify(int target_count, double aggressiveness=7, bool verbose=False, bool preserve_border=False):
+    simplify_mesh(target_count, aggressiveness, verbose, preserve_border)
 
-def simplify_lossless(bool verbose=False):
-    simplify_mesh_lossless(verbose)
+def simplify_lossless(bool verbose=False, bool preserve_border=False):
+    simplify_mesh_lossless(verbose, preserve_border)
 
 
 def save_obj(filename):

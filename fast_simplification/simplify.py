@@ -44,6 +44,7 @@ def simplify(
     verbose: bool = False,
     return_collapses: bool = False,
     lossless: bool = False,
+    preserve_border: bool = False,
 ) -> (
     tuple[NDArray[np.float64], NDArray[np.int64]]
     | tuple[NDArray[np.float64], NDArray[np.int64], NDArray[np.int64]]
@@ -80,6 +81,10 @@ def simplify(
         i-th collapse, the vertex ``i1`` was collapsed into the vertex ``i0``.
     lossless : bool, optional
         If True, simplify the mesh losslessly.
+    preserve_border : bool, default: False
+        If True, preserve the open boundary (border) of the mesh by
+        preventing the collapse of any edge that touches a border vertex.
+        Applies to both the standard and lossless simplification paths.
 
     Returns
     -------
@@ -155,10 +160,10 @@ def simplify(
     )
 
     if lossless:
-        _simplify.simplify_lossless(verbose)
+        _simplify.simplify_lossless(verbose, preserve_border)
     else:
         target_count = _check_args(target_reduction, target_count, n_faces)
-        _simplify.simplify(target_count, agg, verbose)
+        _simplify.simplify(target_count, agg, verbose, preserve_border)
     points = _simplify.return_points()
     faces = _simplify.return_faces_int32_no_padding().reshape(-1, 3)
 
@@ -173,6 +178,7 @@ def simplify_mesh(
     target_count: int | None = None,
     agg: float = 7.0,
     verbose: bool = False,
+    preserve_border: bool = False,
 ):
     """Simplify a pyvista mesh.
 
@@ -196,6 +202,9 @@ def simplify_mesh(
         reach the ``target_reduction`` or ``target_count``.
     verbose : bool, optional
         Enable verbose output when simplifying the mesh.
+    preserve_border : bool, default: False
+        If True, preserve the open boundary (border) of the mesh by
+        preventing the collapse of any edge that touches a border vertex.
 
     Returns
     -------
@@ -222,7 +231,7 @@ def simplify_mesh(
     )
 
     target_count = _check_args(target_reduction, target_count, n_faces)
-    _simplify.simplify(target_count, agg, verbose)
+    _simplify.simplify(target_count, agg, verbose, preserve_border)
 
     # Fast simplification only produces triangle meshes, so the output cell
     # array is uniformly 3-wide.  On VTK >= 9.6.2 this is a perfect fit for
