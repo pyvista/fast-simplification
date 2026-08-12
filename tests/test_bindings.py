@@ -180,6 +180,24 @@ def test_return_faces_no_padding_is_flat_connectivity():
     assert np.array_equal(unpadded.reshape(-1, 3), faces)
 
 
+def test_return_faces_int32_is_vtk_padded():
+    # ``return_faces_int32`` (used by simplify.py on a 32-bit-vtkIdType build,
+    # VTK < 9.6.2) returns VTK-padded connectivity [3, i, j, k] per triangle in
+    # a flat int32 buffer of length n_tri*4. A stride bug in the C++ core used
+    # to write 4 values while advancing by 3, clobbering the next triangle's
+    # leading count and leaving a garbage tail; guard against a regression.
+    fast_simplification.simplify(PLANE_POINTS, PLANE_FACES, target_reduction=0.5)
+    padded = _simplify.return_faces_int32()
+    assert padded.dtype == np.int32
+    assert padded.size % 4 == 0
+    quads = padded.reshape(-1, 4)
+    assert np.all(quads[:, 0] == 3)  # every leading count is 3, no garbage tail
+    unpadded = _simplify.return_faces_int32_no_padding()
+    assert np.array_equal(quads[:, 1:].ravel(), unpadded)
+    # and it agrees with the (correctly strided) int64 accessor
+    assert np.array_equal(padded.astype(np.int64), _simplify.return_faces_int64())
+
+
 def test_return_faces_int64_is_vtk_padded():
     # ``return_faces_int64`` is the path simplify.py uses on the standard
     # 64-bit-vtkIdType build: VTK-padded connectivity [3, i, j, k] per
