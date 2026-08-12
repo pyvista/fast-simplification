@@ -142,10 +142,10 @@ namespace Simplify{
     int jj = 0;
     for (int ii = 0; ii < n_tri; ii ++){
       if (!triangles[ii].deleted){
-        tri[0 + 3*jj] = 3;
-        tri[1 + 3*jj] = triangles[ii].v[0];
-        tri[2 + 3*jj] = triangles[ii].v[1];
-        tri[3 + 3*jj] = triangles[ii].v[2];
+        tri[0 + 4*jj] = 3;
+        tri[1 + 4*jj] = triangles[ii].v[0];
+        tri[2 + 4*jj] = triangles[ii].v[1];
+        tri[3 + 4*jj] = triangles[ii].v[2];
         jj += 1;
       }
     }
