@@ -86,6 +86,11 @@ def test_simplify_int64_faces_matches_int32():
     )
     assert np.array_equal(f32, f64)
     assert np.allclose(p32, p64)
+    # ``simplify`` always returns int32 faces regardless of the input face
+    # dtype (it reads back ``return_faces_int32_no_padding``), matching the
+    # return type annotation.
+    assert f32.dtype == np.int32
+    assert f64.dtype == np.int32
 
 
 def test_simplify_list_faces():

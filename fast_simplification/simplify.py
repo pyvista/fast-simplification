@@ -46,8 +46,8 @@ def simplify(
     lossless: bool = False,
     preserve_border: bool = False,
 ) -> (
-    tuple[NDArray[np.float64], NDArray[np.int64]]
-    | tuple[NDArray[np.float64], NDArray[np.int64], NDArray[np.int64]]
+    tuple[NDArray[np.float64], NDArray[np.int32]]
+    | tuple[NDArray[np.float64], NDArray[np.int32], NDArray[np.int32]]
 ):
     """Simplify a triangular mesh.
 
