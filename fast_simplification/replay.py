@@ -167,6 +167,39 @@ def replay_simplification(points, triangles, collapses):
     if not triangles.flags.c_contiguous:
         triangles = np.ascontiguousarray(triangles)
 
+    # Vertices that are not referenced by any triangle are dropped by the
+    # decimation core, but the pure-array bookkeeping below
+    # (``compute_indice_mapping``) retains them and assigns them an index.
+    # That shifts the index of every vertex that follows an unreferenced one,
+    # so ``indice_mapping`` ends up pointing past the end of the decimated
+    # points and ``_map_isolated_points`` / the final remap raise an
+    # ``IndexError`` (issue #60). Strip the unreferenced vertices up front so
+    # the numbering is dense, then re-expand ``indice_mapping`` to the original
+    # vertex count (unreferenced vertices map to ``-1``) before returning.
+    n_points_full = points.shape[0]
+    referenced = np.zeros(n_points_full, dtype=bool)
+    if triangles.size:
+        referenced[np.unique(triangles)] = True
+    unreferenced_present = not referenced.all()
+    if unreferenced_present:
+        kept_vertices = np.flatnonzero(referenced)
+        old_to_new = np.full(n_points_full, -1, dtype=np.int64)
+        old_to_new[kept_vertices] = np.arange(kept_vertices.shape[0])
+        points = np.ascontiguousarray(points[kept_vertices])
+        triangles = np.ascontiguousarray(old_to_new[triangles].astype(triangles.dtype, copy=False))
+        collapses = np.asarray(collapses)
+        if collapses.size:
+            remapped = old_to_new[collapses]
+            # An unreferenced vertex has no incident edge, so it can never be
+            # collapsed; a negative entry here means the collapses do not
+            # belong to this mesh.
+            if (remapped < 0).any():
+                raise ValueError(
+                    "``collapses`` references a vertex that is not part of any "
+                    "triangle; the collapses do not match the provided mesh."
+                )
+            collapses = np.ascontiguousarray(remapped.astype(np.int32, copy=False))
+
     if triangles.dtype == np.int32:
         load = _replay.load_int32
     elif triangles.dtype == np.int64:
@@ -212,5 +245,12 @@ def replay_simplification(points, triangles, collapses):
         mapping[ip:] -= 1
     indice_mapping = mapping[indice_mapping]
     dec_triangles = mapping[dec_triangles]
+
+    # Re-expand the mapping to the original vertex count; vertices that were
+    # unreferenced (and therefore not part of the decimated mesh) map to -1.
+    if unreferenced_present:
+        full_indice_mapping = np.full(n_points_full, -1, dtype=indice_mapping.dtype)
+        full_indice_mapping[kept_vertices] = indice_mapping
+        indice_mapping = full_indice_mapping
 
     return dec_points, dec_triangles, indice_mapping
