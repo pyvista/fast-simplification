@@ -224,14 +224,41 @@ def simplify_mesh(
     target_count = _check_args(target_reduction, target_count, n_faces)
     _simplify.simplify(target_count, agg, verbose)
 
-    # return the correct datatype of the faces
-    if pv._get_vtk_id_type() == np.int32:
-        faces = _simplify.return_faces_int32()
-    else:
-        faces = _simplify.return_faces_int64()
+    # Fast simplification only produces triangle meshes, so the output cell
+    # array is uniformly 3-wide.  On VTK >= 9.6.2 this is a perfect fit for
+    # fixed-size cell storage, which drops the redundant offsets array by
+    # storing only the flat connectivity together with a constant cell size.
+    if pv.vtk_version_info >= (9, 6, 2):
+        from vtkmodules.util.numpy_support import numpy_to_vtk
+        from vtkmodules.vtkCommonDataModel import vtkCellArray
 
-    # construct mesh
-    mesh = pv.PolyData(_simplify.return_points(), faces, deep=False)
+        # unpadded flat connectivity (length n_tri * 3), int32.  numpy_to_vtk
+        # maps int32 to a ``vtkTypeInt32Array``, one of the connectivity array
+        # widths accepted by ``vtkCellArray.SetData``.
+        connectivity = _simplify.return_faces_int32_no_padding()
+        connectivity_vtk = numpy_to_vtk(connectivity, deep=False)
+
+        carr = vtkCellArray()
+        carr.SetData(3, connectivity_vtk)
+        # keep the numpy buffer alive for the lifetime of the cell array
+        carr._connectivity_np_ref = connectivity_vtk
+
+        # build an empty PolyData and attach points + polys directly so that
+        # no spurious vertex cells are generated (as would happen when passing
+        # only points to the PolyData constructor)
+        mesh = pv.PolyData()
+        mesh.points = _simplify.return_points()
+        mesh.SetPolys(carr)
+    else:
+        # return the correct datatype of the faces
+        if pv._get_vtk_id_type() == np.int32:
+            faces = _simplify.return_faces_int32()
+        else:
+            faces = _simplify.return_faces_int64()
+
+        # construct mesh
+        mesh = pv.PolyData(_simplify.return_points(), faces, deep=False)
+
     mesh.field_data["fast_simplification_collapses"] = _simplify.return_collapses()
 
     return mesh
