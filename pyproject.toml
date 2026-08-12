@@ -1,44 +1,51 @@
 [build-system]
-build-backend = "setuptools.build_meta"
-requires = [
-  "cython>=3.0.0",
-  "numpy>=2,<3",
-  "setuptools>=45.0",
-  "wheel>=0.37.0"
+build-backend = "scikit_build_core.build"
+requires = ["scikit-build-core >=0.10", "nanobind >=1.3.2", "setuptools-scm>=8"]
+
+[project]
+authors = [
+  {name = "Alex Kaszynski", email = "akascap@gmail.com"}
 ]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Science/Research",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14"
+]
+dependencies = ["numpy"]
+description = "Wrapper around the Fast-Quadric-Mesh-Simplification library."
+dynamic = ["version"]
+keywords = ["fast-simplification", "decimation"]
+license = "MIT"
+name = "fast_simplification"
+readme = "README.rst"
+requires-python = ">=3.9"
+
+[project.urls]
+Homepage = "https://github.com/pyvista/fast-simplification"
+Issues = "https://github.com/pyvista/fast-simplification/issues"
+Repository = "https://github.com/pyvista/fast-simplification"
 
 [tool.cibuildwheel]
 archs = ["auto64"]  # 64-bit only
-before-build = "pip install abi3audit"
-build = "cp310-* cp311-*"  # 3.11+ are abi3 wheels
-skip = "*musllinux*"
+build = "cp310-* cp311-* cp312-* cp313-* cp314*"
+skip = "*musllinux* cp314t-*"  # disable musl-based wheels and free threading
 test-command = "pytest {project}/tests"
-test-requires = "pyvista pytest"
-
-[tool.cibuildwheel.linux]
-repair-wheel-command = [
-  "auditwheel repair -w {dest_dir} {wheel}",
-  "bash tools/audit_wheel.sh {wheel}"
-]
+test-requires = "pytest pyvista"
 
 [tool.cibuildwheel.macos]
 archs = ["native"]
-repair-wheel-command = [
-  "delocate-wheel --require-archs {delocate_archs} -w {dest_dir} -v {wheel}",
-  "bash tools/audit_wheel.sh {wheel}"
-]
 
-[tool.cibuildwheel.windows]
-before-build = "pip install delvewheel abi3audit"
-repair-wheel-command = [
-  "delvewheel repair -w {dest_dir} {wheel}",
-  "bash tools/audit_wheel.sh {wheel}"
-]
+[tool.cibuildwheel.macos.environment]
+MACOSX_DEPLOYMENT_TARGET = "10.14"  # Needed for full C++17 support on MacOS
 
 [tool.codespell]
 ignore-words-list = 'THIRDPARTY'
 quiet-level = 3
-skip = '*.pyc,*.txt,*.gif,*.png,*.jpg,*.js,*.html,*.doctree,*.ttf,*.woff,*.woff2,*.eot,*.mp4,*.inv,*.pickle,*.ipynb,flycheck*,./.git/*,./.hypothesis/*,*.yml,./doc/build/*,./doc/images/*,./dist/*,*~,.hypothesis*,./doc/source/examples/*,*cover,*.dat,*.mac,build,fast_simplification/Simplify.h,PKG-INFO,*.mypy_cache/*,./docker/mapdl/*,./_unused/*'
+skip = '*.pyc,*.txt,*.gif,*.png,*.jpg,*.js,*.html,*.doctree,*.ttf,*.woff,*.woff2,*.eot,*.mp4,*.inv,*.pickle,*.ipynb,flycheck*,./.git/*,./.hypothesis/*,*.yml,./doc/build/*,./doc/images/*,./dist/*,*~,.hypothesis*,./doc/source/examples/*,*cover,*.dat,*.mac,build,fast_simplification/Simplify.h,fast_simplification/Replay.h,PKG-INFO,*.mypy_cache/*,./docker/mapdl/*,./_unused/*,*.cpp,*.h'
 
 [tool.isort]
 default_section = "THIRDPARTY"
@@ -62,7 +69,14 @@ line-length = 100
 
 [tool.ruff.lint]
 ignore = []
-# Enable Pyflakes (`F`) and a subset of the pycodestyle (`E`)  codes by default.
-# Unlike Flake8, Ruff doesn't enable pycodestyle warnings (`W`) or
-# McCabe complexity (`C901`) by default.
+# Enable Pyflakes (`F`) and a subset of the pycodestyle (`E`) codes by default.
 select = ["E4", "E7", "E9", "F"]
+
+[tool.scikit-build]
+build-dir = "build/{wheel_tag}"
+minimum-version = "0.10"
+metadata.version.provider = "scikit_build_core.metadata.setuptools_scm"
+sdist.exclude = [".github", "*.png", "tests", ".mypy_cache", ".pre-commit-config.yaml", "*_cache", "CONTRIBUTING.md", ".gitignore"]
+
+[tool.setuptools_scm]
+fallback_version = "0.0.0"

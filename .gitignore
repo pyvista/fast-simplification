@@ -9,10 +9,6 @@ __pycache__/
 # Pip
 *.egg-info
 
-# Cython generated files #
-fast_simplification/_simplify.cpp
-fast_simplification/_replay.cpp
-
 # documentation
 doc/_build/
 doc/examples/
