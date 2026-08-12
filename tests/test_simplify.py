@@ -151,3 +151,53 @@ def test_simplify_mesh_fixed_size_storage(mesh):
     # on VTK >= 9.6.2 the polys use fixed-size storage (no explicit offsets)
     if pv.vtk_version_info >= (9, 6, 2):
         assert mesh_out.GetPolys().IsStorageFixedSize()
+
+
+def _n_boundary_points(mesh):
+    """Return the number of open-boundary (perimeter) points of a mesh."""
+    edges = mesh.extract_feature_edges(
+        boundary_edges=True,
+        feature_edges=False,
+        manifold_edges=False,
+        non_manifold_edges=False,
+    )
+    return edges.n_points
+
+
+@skip_no_vtk
+def test_preserve_border():
+    # A triangulated flat plane has an open boundary (its perimeter). All of
+    # its points are coplanar, so an aggressive decimation happily collapses
+    # boundary points unless they are explicitly protected.
+    mesh = pv.Plane(i_resolution=20, j_resolution=20).triangulate()
+    n_border_in = _n_boundary_points(mesh)
+    assert n_border_in == 80
+
+    # Standard path: without protection the border is eroded, with protection
+    # it is retained exactly.
+    out_free = fast_simplification.simplify_mesh(
+        mesh, target_reduction=0.9, preserve_border=False
+    )
+    out_kept = fast_simplification.simplify_mesh(
+        mesh, target_reduction=0.9, preserve_border=True
+    )
+    assert _n_boundary_points(out_free) < n_border_in
+    assert _n_boundary_points(out_kept) == n_border_in
+
+    # Lossless path (exposed through the array API): same contract.
+    triangles = mesh._connectivity_array.reshape(-1, 3)
+    p_free, f_free = fast_simplification.simplify(
+        mesh.points, triangles, lossless=True, preserve_border=False
+    )
+    p_kept, f_kept = fast_simplification.simplify(
+        mesh.points, triangles, lossless=True, preserve_border=True
+    )
+
+    def _as_polydata(points, faces):
+        cells = np.hstack(
+            [np.full((faces.shape[0], 1), 3, dtype=np.int64), faces.astype(np.int64)]
+        )
+        return pv.PolyData(points, cells)
+
+    assert _n_boundary_points(_as_polydata(p_free, f_free)) < n_border_in
+    assert _n_boundary_points(_as_polydata(p_kept, f_kept)) == n_border_in
