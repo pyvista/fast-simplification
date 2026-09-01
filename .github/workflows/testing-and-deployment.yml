@@ -22,12 +22,12 @@ jobs:
     - uses: actions/checkout@v7
 
     - name: Set up Python
-      uses: actions/setup-python@v6
+      uses: actions/setup-python@v7
       with:
         python-version: '3.13'
 
     - name: Setup headless display
-      uses: pyvista/setup-headless-display-action@v4
+      uses: pyvista/setup-headless-display-action@v5
 
     - name: Build and validate wheel
       run: |
@@ -58,12 +58,12 @@ jobs:
     - uses: actions/checkout@v7
 
     - name: Setup Python
-      uses: actions/setup-python@v6
+      uses: actions/setup-python@v7
       with:
         python-version: '3.13'
 
     - name: Setup headless display
-      uses: pyvista/setup-headless-display-action@v4
+      uses: pyvista/setup-headless-display-action@v5
 
     - name: Install library
       run: pip install .
@@ -94,7 +94,7 @@ jobs:
     - uses: actions/checkout@v7
 
     - name: Build wheels
-      uses: pypa/cibuildwheel@v4.1.0
+      uses: pypa/cibuildwheel@v4.2.0
 
     - name: List generated wheels
       run: ls ./wheelhouse/*
